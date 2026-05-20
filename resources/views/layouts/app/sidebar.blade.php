@@ -6,43 +6,43 @@
     <body class="min-h-screen bg-white dark:bg-zinc-800">
         <flux:sidebar sticky collapsible="mobile" class="border-e border-gray-200 bg-white dark:border-gray-700 dark:bg-white">
             <flux:sidebar.header>
-                <x-app-logo :sidebar="true" href="{{ route('dashboard') }}" wire:navigate />
+                <x-app-logo :sidebar="true" href="{{ route('dashboard') }}" />
                 <flux:sidebar.collapse class="lg:hidden" />
             </flux:sidebar.header>
 
             <flux:sidebar.nav>
                 <flux:sidebar.group :heading="__('Principal')" class="grid">
-                    <flux:sidebar.item icon="home" :href="route('dashboard')" :current="request()->routeIs('dashboard')" wire:navigate>
+                    <flux:sidebar.item icon="home" :href="route('dashboard')" :current="request()->routeIs('dashboard')">
                         {{ __('Dashboard') }}
                     </flux:sidebar.item>
-                    <flux:sidebar.item icon="document-plus" :href="route('cotizaciones.wizard')" :current="request()->routeIs('cotizaciones.wizard')" wire:navigate>
+                    <flux:sidebar.item icon="document-plus" :href="route('cotizaciones.create')" :current="request()->routeIs('cotizaciones.create')">
                         {{ __('Nueva cotización') }}
                     </flux:sidebar.item>
-                    <flux:sidebar.item icon="document-duplicate" :href="route('cotizaciones.index')" :current="request()->routeIs('cotizaciones.*')" wire:navigate>
+                    <flux:sidebar.item icon="document-duplicate" :href="route('cotizaciones.index')" :current="request()->routeIs('cotizaciones.*')">
                         {{ __('Cotizaciones') }}
                     </flux:sidebar.item>
                 </flux:sidebar.group>
 
                 <flux:sidebar.group :heading="__('Catálogos')" class="grid">
-                    <flux:sidebar.item icon="user-group" :href="route('medicos.index')" :current="request()->routeIs('medicos.*')" wire:navigate>
+                    <flux:sidebar.item icon="user-group" :href="route('medicos.index')" :current="request()->routeIs('medicos.*')">
                         {{ __('Médicos') }}
                     </flux:sidebar.item>
-                    <flux:sidebar.item icon="building-office-2" :href="route('instituciones.index')" :current="request()->routeIs('instituciones.*')" wire:navigate>
+                    <flux:sidebar.item icon="building-office-2" :href="route('instituciones.index')" :current="request()->routeIs('instituciones.*')">
                         {{ __('Instituciones') }}
                     </flux:sidebar.item>
-                    <flux:sidebar.item icon="beaker" :href="route('estudios.index')" :current="request()->routeIs('estudios.*')" wire:navigate>
+                    <flux:sidebar.item icon="beaker" :href="route('estudios.index')" :current="request()->routeIs('estudios.*')">
                         {{ __('Estudios') }}
                     </flux:sidebar.item>
                 </flux:sidebar.group>
 
                 <flux:sidebar.group :heading="__('Agenda')" class="grid">
-                    <flux:sidebar.item icon="calendar" :href="route('agenda.calendario')" :current="request()->routeIs('agenda.calendario')" wire:navigate>
+                    <flux:sidebar.item icon="calendar" :href="route('agenda.calendario')" :current="request()->routeIs('agenda.calendario')">
                         {{ __('Calendario') }}
                     </flux:sidebar.item>
-                    <flux:sidebar.item icon="users" :href="route('agenda.pacientes')" :current="request()->routeIs('agenda.pacientes')" wire:navigate>
+                    <flux:sidebar.item icon="users" :href="route('agenda.pacientes.index')" :current="request()->routeIs('agenda.pacientes.*')">
                         {{ __('Pacientes') }}
                     </flux:sidebar.item>
-                    <flux:sidebar.item icon="building-storefront" :href="route('agenda.centros')" :current="request()->routeIs('agenda.centros')" wire:navigate>
+                    <flux:sidebar.item icon="building-storefront" :href="route('agenda.centros.index')" :current="request()->routeIs('agenda.centros.*')">
                         {{ __('Centros') }}
                     </flux:sidebar.item>
                 </flux:sidebar.group>
@@ -84,7 +84,7 @@
                     <flux:menu.separator />
 
                     <flux:menu.radio.group>
-                        <flux:menu.item :href="route('profile.edit')" icon="cog" wire:navigate>
+                        <flux:menu.item :href="route('profile.edit')" icon="cog">
                             {{ __('Configuración') }}
                         </flux:menu.item>
                     </flux:menu.radio.group>
@@ -108,11 +108,7 @@
 
         {{ $slot }}
 
-        @persist('toast')
-            <flux:toast.group>
-                <flux:toast />
-            </flux:toast.group>
-        @endpersist
+        <flux:toast />
 
         @fluxScripts
     </body>

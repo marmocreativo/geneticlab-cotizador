@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body { font-family: Arial, sans-serif; font-size: 14px; color: #333; margin: 0; padding: 32px; }
+        h1 { color: #002745; font-size: 18px; }
+        table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+        th { background: #002745; color: #fff; padding: 8px 12px; text-align: left; font-size: 12px; text-transform: uppercase; }
+        td { padding: 8px 12px; border-bottom: 1px solid #e5e7eb; }
+        .total { font-weight: bold; font-size: 15px; }
+        .footer { margin-top: 32px; font-size: 12px; color: #888; border-top: 1px solid #e5e7eb; padding-top: 16px; }
+    </style>
+</head>
+<body>
+    <h1>Cotización {{ $cotizacion->folio }}</h1>
+
+    <p>Estimado {{ $cotizacion->medico?->nombre_completo ?? 'Dr./Dra.' }},</p>
+    <p>Adjunto encontrará la cotización con los estudios moleculares solicitados.</p>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Estudio</th>
+                <th>Cantidad</th>
+                <th>Precio unitario</th>
+                <th>Subtotal</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach ($cotizacion->estudios as $renglon)
+            <tr>
+                <td>{{ $renglon->estudio?->nombre ?? '—' }}</td>
+                <td>{{ $renglon->cantidad }}</td>
+                <td>${{ number_format($renglon->precio_unitario, 2) }} MXN</td>
+                <td>${{ number_format($renglon->subtotal, 2) }} MXN</td>
+            </tr>
+            @endforeach
+        </tbody>
+    </table>
+
+    @if ($cotizacion->descuento > 0)
+    <p>Descuento aplicado: {{ $cotizacion->descuento }}%</p>
+    @endif
+
+    <p class="total">Total: ${{ number_format($cotizacion->total, 2) }} MXN + IVA</p>
+
+    @if ($cotizacion->valida_hasta)
+    <p>Cotización válida hasta el {{ $cotizacion->valida_hasta->format('d/m/Y') }}.</p>
+    @endif
+
+    <div class="footer">
+        Agradecemos su interés. Si tiene alguna pregunta, no dude en contactarnos.<br>
+        <strong>GeneticLab</strong>
+    </div>
+</body>
+</html>

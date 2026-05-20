@@ -1,46 +1,62 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\CotizacionController;
+use App\Http\Controllers\MedicoController;
+use App\Http\Controllers\InstitucionController;
+use App\Http\Controllers\EstudioController;
+use App\Http\Controllers\AgendaController;
+use App\Http\Controllers\UsuarioController;
+use App\Http\Controllers\AgendaPacienteController;
+use App\Http\Controllers\AgendaCentroController;
 
 // ── Pública ───────────────────────────────────────────
-Route::get('/', function () {
-    return view('welcome');
-})->name('welcome');
-
+Route::get('/', fn() => view('welcome'))->name('welcome');
 
 Route::middleware('auth')->group(function () {
 
-    Route::get('/dashboard', function () {
-        return view('dashboard');
-    })->name('dashboard');
+    // Dashboard
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::redirect('/home', '/dashboard')->name('home');
 
     // Cotizaciones
-    Route::get('/cotizaciones',        \App\Livewire\Cotizaciones\Index::class)->name('cotizaciones.index');
-    Route::get('/nueva-cotizacion',    \App\Livewire\Cotizaciones\Wizard::class)->name('cotizaciones.wizard');
-    Route::get('/cotizaciones/{cotizacion}', \App\Livewire\Cotizaciones\Show::class)->name('cotizaciones.show');
+    Route::resource('cotizaciones', CotizacionController::class)
+        ->only(['index', 'create', 'store', 'show', 'destroy']);
+
+    Route::patch('cotizaciones/{cotizacion}/estado', [CotizacionController::class, 'actualizarEstado'])
+        ->name('cotizaciones.estado');
 
     // Médicos
-    Route::get('/medicos',                   \App\Livewire\Medicos\Index::class)->name('medicos.index');
-    Route::get('/medicos/nuevo',             \App\Livewire\Medicos\Form::class)->name('medicos.create');
-    Route::get('/medicos/{medico}/editar',   \App\Livewire\Medicos\Form::class)->name('medicos.edit');
+    Route::resource('medicos', MedicoController::class);
 
     // Instituciones
-    Route::get('/instituciones',                    \App\Livewire\Instituciones\Index::class)->name('instituciones.index');
-    Route::get('/instituciones/nueva',              \App\Livewire\Instituciones\Form::class)->name('instituciones.create');
-    Route::get('/instituciones/{hospital}/editar',  \App\Livewire\Instituciones\Form::class)->name('instituciones.edit');
+    Route::resource('instituciones', InstitucionController::class)
+        ->parameters(['instituciones' => 'hospital']);
 
     // Estudios
-    Route::get('/estudios',                  \App\Livewire\Estudios\Index::class)->name('estudios.index');
-    Route::get('/estudios/nuevo',            \App\Livewire\Estudios\Form::class)->name('estudios.create');
-    Route::get('/estudios/{estudio}/editar', \App\Livewire\Estudios\Form::class)->name('estudios.edit');
+    Route::resource('estudios', EstudioController::class);
 
     // Agenda
     Route::prefix('agenda')->name('agenda.')->group(function () {
-        Route::get('/',          \App\Livewire\Agenda\Calendario::class)->name('calendario');
-        Route::get('/pacientes', \App\Livewire\Agenda\Pacientes::class)->name('pacientes');
-        Route::get('/centros',   \App\Livewire\Agenda\Centros::class)->name('centros');
+        Route::get('/', [AgendaController::class, 'index'])->name('calendario');
+
+        // Nueva cita wizard
+        Route::get('/nueva-cita',  [AgendaController::class, 'create'])->name('citas.create');
+        Route::post('/nueva-cita', [AgendaController::class, 'store'])->name('citas.store');
+
+        // Detalle de cita (para fetch del modal)
+        Route::get('/citas/{cita}',          [AgendaController::class, 'show'])->name('citas.show');
+        Route::patch('/citas/{cita}/estado', [AgendaController::class, 'actualizarEstado'])->name('citas.estado');
+        Route::delete('/citas/{cita}',       [AgendaController::class, 'destroy'])->name('citas.destroy');
+
+        Route::resource('pacientes', AgendaPacienteController::class);
+        Route::resource('centros',   AgendaCentroController::class)
+            ->parameters(['centros' => 'centro']);
     });
+
+    // Usuarios
+    Route::resource('usuarios', UsuarioController::class)->only(['index']);
 
 });
 

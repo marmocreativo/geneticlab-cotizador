@@ -11,11 +11,11 @@ echo "<h2>🔍 Iniciando sistema...</h2>";
 
 try {
     echo "1. Cargando autoloader... ";
-    require __DIR__.'/../../kepler_administrador_2026/vendor/autoload.php';
+    require __DIR__.'/../../cotizaciones/vendor/autoload.php';
     echo "✅<br>";
     
     echo "2. Cargando bootstrap... ";
-    $app = require_once __DIR__.'/../../kepler_administrador_2026/bootstrap/app.php';
+    $app = require_once __DIR__.'/../../cotizaciones/bootstrap/app.php';
     echo "✅<br>";
     
     echo "3. Capturando Request... ";
@@ -91,11 +91,19 @@ try {
         </form>
 
         <form method="post" style="display: inline;">
+            <button type="submit" name="action" value="view_clear" class="btn">Limpiar Cache Vistas</button>
+        </form>
+
+        <form method="post" style="display: inline;">
             <button type="submit" name="action" value="optimize" class="btn">Optimize</button>
         </form>
 
         <form method="post" style="display: inline;">
             <button type="submit" name="action" value="config_cache" class="btn">Cache Config</button>
+        </form>
+
+        <form method="post" style="display: inline;">
+            <button type="submit" name="action" value="config_clear_manual" class="btn">Clear Config (Manual)</button>
         </form>
 
         <form method="post" style="display: inline;">
@@ -163,6 +171,18 @@ try {
                         }
                         echo "</pre>";
                         break;
+
+                    case 'config_clear_manual':
+                        echo "<pre>Eliminando config cache manualmente...\n";
+                        $configCache = __DIR__ . '/../../kepler_administrador_2026/bootstrap/cache/config.php';
+                        if (file_exists($configCache)) {
+                            unlink($configCache);
+                            echo "✅ Archivo eliminado: bootstrap/cache/config.php\n";
+                        } else {
+                            echo "ℹ️ No existe config cache, nada que limpiar.\n";
+                        }
+                        echo "</pre>";
+                        break;
                         
                     case 'optimize':
                         echo "<pre>Optimizando aplicación...\n";
@@ -186,6 +206,14 @@ try {
                         $output = \Illuminate\Support\Facades\Artisan::output();
                         echo htmlspecialchars($output);
                         echo "\n✅ Route cache eliminado exitosamente</pre>";
+                        break;
+
+                    case 'view_clear':
+                        echo "<pre>Limpiando cache de vistas...\n";
+                        \Illuminate\Support\Facades\Artisan::call('view:clear');
+                        $output = \Illuminate\Support\Facades\Artisan::output();
+                        echo htmlspecialchars($output);
+                        echo "\n✅ Cache de vistas limpiado</pre>";
                         break;
                         
                     case 'route_cache':

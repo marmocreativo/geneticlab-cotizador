@@ -35,9 +35,11 @@
                     <label class="mb-1 block text-sm font-medium text-gray-700">Prefijo</label>
                     <select name="prefijo"
                             class="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500">
-                        <option value="" @selected(old('prefijo', $medico->prefijo ?? '') === '')>Sin prefijo</option>
-                        <option value="Dr."  @selected(old('prefijo', $medico->prefijo ?? '') === 'Dr.')>Dr.</option>
-                        <option value="Dra." @selected(old('prefijo', $medico->prefijo ?? '') === 'Dra.')>Dra.</option>
+                            <option value="" @selected(old('prefijo', $medico->prefijo ?? '') === '')>Sin prefijo</option>
+                            <option value="Dr."  @selected(old('prefijo', $medico->prefijo ?? '') === 'Dr.')>Dr.</option>
+                            <option value="Dra." @selected(old('prefijo', $medico->prefijo ?? '') === 'Dra.')>Dra.</option>
+                            <option value="Sr."  @selected(old('prefijo', $medico->prefijo ?? '') === 'Sr.')>Sr.</option>
+                            <option value="Sra." @selected(old('prefijo', $medico->prefijo ?? '') === 'Sra.')>Sra.</option>
                     </select>
                 </div>
                 <div>

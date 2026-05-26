@@ -170,4 +170,20 @@ class CotizacionController extends Controller
 
         return back()->with('success', 'Estado actualizado correctamente.');
     }
+
+    public function enviar(Request $request, Cotizacion $cotizacion)
+    {
+        $request->validate([
+            'email' => 'required|email',
+        ]);
+
+        $cotizacion->load(['medico.hospital', 'hospital', 'estudios.estudio']);
+
+        \Illuminate\Support\Facades\Mail::to($request->email)
+            ->send(new \App\Mail\CotizacionMail($cotizacion));
+
+        $cotizacion->update(['estado' => 'enviada']);
+
+        return back()->with('success', 'Cotización enviada a ' . $request->email);
+    }
 }

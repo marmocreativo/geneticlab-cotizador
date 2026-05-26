@@ -60,6 +60,39 @@
                     </button>
                 </form>
             @endif
+
+            {{-- Enviar por correo --}}
+            <div x-data="{ abierto: false }" class="relative">
+                <button type="button"
+                        @click="abierto = !abierto"
+                        class="inline-flex items-center gap-2 rounded-lg border border-gray-200 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="size-4" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75" />
+                    </svg>
+                    Enviar por correo
+                </button>
+
+                <div x-show="abierto"
+                     @click.outside="abierto = false"
+                     x-transition
+                     class="absolute right-0 z-10 mt-2 w-72 rounded-xl border border-gray-200 bg-white p-4 shadow-lg">
+                    <p class="mb-2 text-sm font-medium text-gray-700">Enviar cotización</p>
+                    <form method="POST" action="{{ route('cotizaciones.enviar', $cotizacion) }}">
+                        @csrf
+                        <input type="email"
+                               name="email"
+                               value="{{ $cotizacion->medico?->email ?? '' }}"
+                               placeholder="correo@ejemplo.com"
+                               required
+                               class="mb-2 w-full rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-900 placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500" />
+                        <button type="submit"
+                                class="w-full rounded-lg px-4 py-2 text-sm font-medium text-white hover:opacity-90 transition-colors"
+                                style="background-color:#002745;">
+                            Enviar
+                        </button>
+                    </form>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -152,7 +185,7 @@
         @if($cotizacion->valida_hasta)
             <div class="rounded-xl border border-gray-200 bg-white p-5">
                 <p class="text-xs font-medium uppercase tracking-wide text-gray-500">Vigencia</p>
-                <p class="mt-2 text-sm text-gray-700">Válida hasta el {{ $cotizacion->valida_hasta->format('d/m/Y') }}</p>
+                <p class="mt-2 text-sm text-gray-700">Válida hasta el {{ $cotizacion->valida_hasta?->format('d/m/Y') ?? '—' }}</p>
             </div>
         @endif
     </div>

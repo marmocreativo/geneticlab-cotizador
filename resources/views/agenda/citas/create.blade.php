@@ -339,8 +339,13 @@
 
     {{-- Datos de pacientes y centros para Alpine --}}
     <script>
-        const _pacientes = @json($pacientes->map(fn($p) => ['id' => $p->id, 'label' => $p->nombre_display, 'folio' => $p->folio]));
-        const _centros   = @json($centros->map(fn($c) => ['id' => $c->id, 'label' => $c->nombre]));
+        @php
+            $pacientesJs = $pacientes->map(fn($p) => ['id' => $p->id, 'label' => $p->nombre_display, 'folio' => $p->folio]);
+            $centrosJs   = $centros->map(fn($c) => ['id' => $c->id, 'label' => $c->nombre]);
+        @endphp
+
+        const _pacientes = @json($pacientesJs);
+        const _centros   = @json($centrosJs);
 
         function wizardCita(pasoInicial = 1) {
             return {
@@ -348,19 +353,19 @@
                 pasos: ['Paciente', 'Centro', 'Fecha y hora'],
 
                 // Paso 1
-                pacienteTipo: '{{ old('paciente_tipo', 'existente') }}',
-                pacienteId: '{{ old('paciente_id') }}',
+                pacienteTipo: '{{ old("paciente_tipo", "existente") }}',
+                pacienteId: '{{ old("paciente_id") }}',
                 busquedaPaciente: '',
                 anonimo: {{ old('anonimo', 0) ? 'true' : 'false' }},
 
                 // Paso 2
-                centroTipo: '{{ old('centro_tipo', 'existente') }}',
-                centroId: '{{ old('centro_id') }}',
+                centroTipo: '{{ old("centro_tipo", "existente") }}',
+                centroId: '{{ old("centro_id") }}',
                 busquedaCentro: '',
 
                 // Paso 3
-                citaFecha: '{{ old('fecha', $fecha) }}',
-                citaHora: '{{ old('hora') }}',
+                citaFecha: '{{ old("fecha", $fecha) }}',
+                citaHora: '{{ old("hora") }}',
 
                 siguientePaso() {
                     if (this.paso === 1 && this.pacienteTipo === 'existente' && !this.pacienteId) {

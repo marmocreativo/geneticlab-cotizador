@@ -13,6 +13,8 @@
     </style>
 </head>
 <body>
+    <img src="{{ 'data:image/png;base64,' . base64_encode(file_get_contents(public_path('logo_azul.png'))) }}"
+        style="height: 45px; width: auto; margin-bottom: 16px;" /><br>
     <h1>Cotización {{ $cotizacion->folio }}</h1>
 
     <p>Estimado {{ $cotizacion->medico?->nombre_completo ?? 'Dr./Dra.' }},</p>

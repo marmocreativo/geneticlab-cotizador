@@ -47,14 +47,21 @@ class DashboardController extends Controller
             ->orderBy('periodo')
             ->pluck('total', 'periodo');
 
-        // Generar todos los períodos del rango para rellenar vacíos
-        $periodos = collect();
-        $cursor   = $desde->copy();
+        // ── Generar períodos del rango ────────────────────
+        $totalPeriodos = $agrupar === 'dia'
+            ? (int) $desde->diffInDays($hasta) + 1
+            : (int) $desde->diffInWeeks($hasta) + 1;
 
-        while ($cursor->lte($hasta)) {
+        $periodos = collect();
+
+        for ($i = 0; $i < $totalPeriodos; $i++) {
+            $cursor = $agrupar === 'dia'
+                ? $desde->copy()->addDays($i)
+                : $desde->copy()->addWeeks($i);
+
             $key = $agrupar === 'dia'
                 ? $cursor->toDateString()
-                : $cursor->format('oW'); // ISO year+week
+                : $cursor->format('oW');
 
             $periodos->put($key, [
                 'label'        => $agrupar === 'dia'
@@ -63,8 +70,6 @@ class DashboardController extends Controller
                 'cotizaciones' => $cotizacionesPorDia->get($key, 0),
                 'citas'        => $citasPorDia->get($key, 0),
             ]);
-
-            $agrupar === 'dia' ? $cursor->addDay() : $cursor->addWeek();
         }
 
         // ── Top centros ───────────────────────────────────

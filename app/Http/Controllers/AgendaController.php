@@ -111,7 +111,47 @@ class AgendaController extends Controller
                 ->with('paso_error', $paso);
         }
 
-        // ... resto del método igual
+        // Paciente
+        if ($request->paciente_tipo === 'existente') {
+            $paciente = Paciente::findOrFail($request->paciente_id);
+        } else {
+            $paciente = Paciente::create([
+                'anonimo'          => $request->boolean('anonimo'),
+                'iniciales'        => $request->iniciales,
+                'nombre'           => $request->nombre,
+                'apellido_paterno' => $request->apellido_paterno,
+                'apellido_materno' => $request->apellido_materno,
+                'fecha_nacimiento' => $request->fecha_nacimiento,
+                'sexo'             => $request->sexo,
+                'whatsapp'         => $request->whatsapp,
+                'correo'           => $request->correo,
+            ]);
+        }
+
+        // Centro
+        if ($request->centro_tipo === 'existente') {
+            $centro = CentroAgenda::findOrFail($request->centro_id);
+        } else {
+            $centro = CentroAgenda::create([
+                'nombre'    => $request->centro_nombre,
+                'direccion' => $request->centro_direccion,
+                'activo'    => true,
+            ]);
+        }
+
+        // Cita
+        Cita::create([
+            'paciente_id' => $paciente->id,
+            'centro_id'   => $centro->id,
+            'fecha'       => $request->fecha,
+            'hora'        => $request->hora,
+            'estado'      => $request->estado,
+            'notas'       => $request->notas,
+        ]);
+
+        return redirect()
+            ->route('agenda.calendario', ['fecha' => $request->fecha])
+            ->with('success', 'Cita registrada correctamente.');
     }
 
     public function show(Cita $cita)
@@ -152,5 +192,17 @@ class AgendaController extends Controller
 
         return redirect()->route('agenda.calendario', ['fecha' => $fecha])
             ->with('success', 'Cita eliminada.');
+    }
+
+    public function enviarCita(Request $request, Cita $cita)
+    {
+        $request->validate(['email' => 'required|email']);
+
+        $cita->load(['paciente', 'centro']);
+
+        \Illuminate\Support\Facades\Mail::to($request->email)
+            ->send(new \App\Mail\CitaMail($cita));
+
+        return response()->json(['ok' => true]);
     }
 }

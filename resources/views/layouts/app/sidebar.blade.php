@@ -6,7 +6,7 @@
     <body class="min-h-screen bg-white dark:bg-zinc-800">
         <flux:sidebar sticky collapsible="mobile" class="border-e border-gray-200 bg-white dark:border-gray-700 dark:bg-white">
             <flux:sidebar.header>
-                <x-app-logo :sidebar="true" href="{{ route('dashboard') }}" />
+                <img src="/favicon.svg" class="h-10 w-auto mx-auto" />
                 <flux:sidebar.collapse class="lg:hidden" />
             </flux:sidebar.header>
 

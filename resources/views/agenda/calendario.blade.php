@@ -105,36 +105,33 @@
                     $esMes = $dia->month === $fechaCarbon->month;
                     $citas = $citasPorDia[$key] ?? collect();
                 @endphp
-                <div class="min-h-[90px] p-1 border-t border-r border-gray-200
-                            {{ !$esMes ? 'bg-gray-50' : 'bg-white' }}">
-                    <div class="flex justify-start mb-1">
-                        <a href="{{ route('agenda.citas.create', ['fecha' => $key]) }}"
-                           class="text-xs font-medium w-6 h-6 flex items-center justify-center rounded-full transition
-                                  hover:bg-blue-100
-                                  {{ $esHoy ? 'bg-blue-600 text-white hover:bg-blue-700' : ($esMes ? 'text-gray-700' : 'text-gray-400') }}">
-                            {{ $dia->day }}
-                        </a>
-                    </div>
-                    <div class="space-y-0.5">
-                        @foreach($citas->take(3) as $cita)
-                            <button
-                                onclick="abrirDetalle({{ $cita->id }})"
-                                class="w-full text-left text-[11px] truncate rounded px-1 py-0.5 cursor-pointer transition
-                                    {{ match($cita->estado) {
-                                        'programada' => 'bg-blue-100 text-blue-800 hover:bg-blue-200',
-                                        'confirmada' => 'bg-green-100 text-green-800 hover:bg-green-200',
-                                        'realizada'  => 'bg-gray-200 text-gray-600 hover:bg-gray-300',
-                                        'cancelada'  => 'bg-red-100 text-red-700 hover:bg-red-200',
-                                        default      => 'bg-gray-100',
-                                    } }}">
-                                {{ $cita->hora }} — {{ $cita->paciente->nombre_display }}
-                            </button>
-                        @endforeach
-                        @if($citas->count() > 3)
-                            <div class="text-[10px] text-gray-400 pl-1">+{{ $citas->count() - 3 }} más</div>
-                        @endif
-                    </div>
+                <div class="min-h-[90px] p-1 border-t border-r border-gray-200 cursor-pointer transition hover:bg-gray-50
+                        {{ !$esMes ? 'bg-gray-50' : 'bg-white' }}"
+                onclick="abrirDia('{{ $key }}')">
+                <div class="flex justify-start mb-1">
+                    <span class="text-xs font-medium w-6 h-6 flex items-center justify-center rounded-full
+                                {{ $esHoy ? 'bg-blue-600 text-white' : ($esMes ? 'text-gray-700' : 'text-gray-400') }}">
+                        {{ $dia->day }}
+                    </span>
                 </div>
+                <div class="space-y-0.5">
+                    @foreach($citas->take(3) as $cita)
+                        <div class="w-full text-left text-[11px] truncate rounded px-1 py-0.5
+                            {{ match($cita->estado) {
+                                'programada' => 'bg-blue-100 text-blue-800',
+                                'confirmada' => 'bg-green-100 text-green-800',
+                                'realizada'  => 'bg-gray-200 text-gray-600',
+                                'cancelada'  => 'bg-red-100 text-red-700',
+                                default      => 'bg-gray-100',
+                            } }}">
+                            {{ $cita->hora }} — {{ $cita->paciente->nombre_display }}
+                        </div>
+                    @endforeach
+                    @if($citas->count() > 3)
+                        <div class="text-[10px] text-gray-400 pl-1">+{{ $citas->count() - 3 }} más</div>
+                    @endif
+                </div>
+            </div>
             @endforeach
         </div>
     @endif
@@ -149,13 +146,14 @@
                     $citas = $citasPorDia[$key] ?? collect();
                 @endphp
                 <div class="flex flex-col border-r border-gray-200 last:border-r-0">
-                    <a href="{{ route('agenda.citas.create', ['fecha' => $key]) }}"
-                       class="text-center py-2 border-b border-gray-200 transition hover:opacity-80
-                              {{ $esHoy ? 'bg-blue-600 text-white' : 'bg-gray-50 text-gray-500' }}">
+                    <div onclick="abrirDia('{{ $key }}')"
+                        class="text-center py-2 border-b border-gray-200 transition cursor-pointer hover:opacity-80
+                                {{ $esHoy ? 'bg-blue-600 text-white' : 'bg-gray-50 text-gray-500' }}">
                         <div class="text-xs font-semibold">{{ $dia->translatedFormat('D') }}</div>
                         <div class="text-sm font-bold">{{ $dia->day }}</div>
-                    </a>
-                    <div class="flex-1 min-h-[300px] p-1 space-y-1 bg-white">
+                    </div>
+                    <div class="flex-1 min-h-[300px] p-1 space-y-1 bg-white cursor-pointer"
+                        onclick="abrirDia('{{ $key }}')">
                         @foreach($citas as $cita)
                             <button
                                 onclick="abrirDetalle({{ $cita->id }})"
@@ -178,6 +176,94 @@
         </div>
     @endif
 
+    {{-- ── Modal día ───────────────────────────────────── --}}
+    <div x-data="modalDia()" x-show="abierto" x-transition
+        class="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
+        style="display:none"
+        id="modal-dia">
+        <div class="w-full max-w-lg rounded-xl bg-white shadow-xl overflow-hidden"
+            @click.outside="cerrar()">
+
+            {{-- Header --}}
+            <div class="flex items-center justify-between border-b border-gray-200 px-6 py-5">
+                <div>
+                    <p class="text-xs font-semibold uppercase tracking-wide text-gray-400">Agenda</p>
+                    <h2 class="text-base font-semibold text-gray-900 mt-0.5" x-text="titulo"></h2>
+                </div>
+                <button @click="cerrar()" class="rounded-lg p-1.5 text-gray-400 hover:bg-gray-100 hover:text-gray-600">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="size-5" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+
+            <div class="p-6">
+
+                {{-- Sin citas --}}
+                <template x-if="citas.length === 0">
+                    <div class="flex flex-col items-center justify-center py-8 text-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="size-10 text-gray-200 mb-3" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5" />
+                        </svg>
+                        <p class="text-sm font-medium text-gray-500">Sin citas para este día</p>
+                        <p class="text-xs text-gray-400 mt-1">Puedes agendar una nueva cita con el botón de abajo.</p>
+                    </div>
+                </template>
+
+                {{-- Lista de citas --}}
+                <template x-if="citas.length > 0">
+                    <div class="mb-5 flex flex-col divide-y divide-gray-100 rounded-xl border border-gray-200 overflow-hidden">
+                        <template x-for="cita in citas" :key="cita.id">
+                            <button type="button"
+                                    @click="cerrar(); abrirDetalle(cita.id)"
+                                    class="flex items-center gap-4 px-4 py-3.5 text-left hover:bg-gray-50 transition-colors">
+
+                                {{-- Hora --}}
+                                <div class="shrink-0 w-14 text-center">
+                                    <span class="text-sm font-bold text-gray-800" x-text="cita.hora"></span>
+                                </div>
+
+                                <div class="h-8 w-px bg-gray-200 shrink-0"></div>
+
+                                {{-- Info --}}
+                                <div class="flex-1 min-w-0">
+                                    <p class="text-sm font-semibold text-gray-900 truncate" x-text="cita.paciente"></p>
+                                    <p class="text-xs text-gray-400 truncate mt-0.5" x-text="cita.centro"></p>
+                                </div>
+
+                                {{-- Estado --}}
+                                <span class="shrink-0 rounded-full px-2.5 py-1 text-xs font-medium"
+                                    :class="{
+                                        'bg-blue-100 text-blue-700':   cita.estado === 'programada',
+                                        'bg-green-100 text-green-700': cita.estado === 'confirmada',
+                                        'bg-gray-200 text-gray-600':   cita.estado === 'realizada',
+                                        'bg-red-100 text-red-700':     cita.estado === 'cancelada',
+                                    }"
+                                    x-text="cita.estado.charAt(0).toUpperCase() + cita.estado.slice(1)">
+                                </span>
+
+                                {{-- Chevron --}}
+                                <svg xmlns="http://www.w3.org/2000/svg" class="size-4 text-gray-300 shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+                                </svg>
+                            </button>
+                        </template>
+                    </div>
+                </template>
+
+                {{-- Botón nueva cita --}}
+                <a :href="'/agenda/nueva-cita?fecha=' + fecha"
+                class="flex w-full items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-medium text-white hover:opacity-90 transition-colors"
+                style="background-color:#002745;">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="size-4" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                    </svg>
+                    Nueva cita para este día
+                </a>
+            </div>
+        </div>
+    </div>
+
     {{-- ── Modal detalle (Alpine + fetch) ─────────────── --}}
     <div x-data="modalDetalle()" x-show="abierto" x-transition
          class="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
@@ -196,6 +282,41 @@
     </div>
 
     <script>
+        {{-- Pasar todas las citas al JS --}}
+        @php
+            $todasLasCitas = collect($citasPorDia)->map(fn($citas) =>
+                $citas->map(fn($c) => [
+                    'id'      => $c->id,
+                    'hora'    => $c->hora,
+                    'estado'  => $c->estado,
+                    'paciente'=> $c->paciente->nombre_display,
+                    'centro'  => $c->centro->nombre,
+                ])
+            );
+        @endphp
+        const _citasPorDia = @json($todasLasCitas);
+
+        function modalDia() {
+            return {
+                abierto: false,
+                fecha:   '',
+                titulo:  '',
+                citas:   [],
+
+                abrir(fecha) {
+                    this.fecha  = fecha;
+                    this.citas  = _citasPorDia[fecha] ?? [];
+                    const [y, m, d] = fecha.split('-');
+                    this.titulo = `Citas del ${d}/${m}/${y}`;
+                    this.abierto = true;
+                },
+
+                cerrar() {
+                    this.abierto = false;
+                }
+            }
+        }
+
         function modalDetalle() {
             return {
                 abierto: false,
@@ -221,14 +342,14 @@
             }
         }
 
-        // Global para llamar desde los botones onclick
-        let _modal;
-        document.addEventListener('alpine:init', () => {
-            // noop — Alpine inicializa el componente solo
-        });
+        function abrirDia(fecha) {
+            const el = document.querySelector('#modal-dia');
+            if (el && el._x_dataStack) {
+                el._x_dataStack[0].abrir(fecha);
+            }
+        }
 
         function abrirDetalle(id) {
-            // Busca el componente Alpine del modal y llama abrir()
             const el = document.querySelector('[x-data="modalDetalle()"]');
             if (el && el._x_dataStack) {
                 el._x_dataStack[0].abrir(id);

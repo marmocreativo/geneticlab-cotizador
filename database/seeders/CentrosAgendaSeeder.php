@@ -10,43 +10,35 @@ class CentrosAgendaSeeder extends Seeder
     public function run(): void
     {
         $centros = [
-            ['id' => 14, 'nombre' => 'BIOLOGICOS ESPECIALIZADOS CUAUHTEMOC',        'direccion' => 'Alvaro Obregón 121-7, Roma Norte, Cuauhtémoc, CDMX 06700'],
-            ['id' => 15, 'nombre' => 'BIOLOGICOS ESPECIALIZADOS NUEVO LEON',         'direccion' => 'Av. Miguel Hidalgo 2030 Pte, Obispado, Monterrey, NL 64060'],
-            ['id' => 16, 'nombre' => 'BIOLOGICOS ESPECIALIZADOS GUADALAJARA',        'direccion' => 'Miguel Lerdo de Tejada 2218-A, Lafayette, Guadalajara, Jal 06700'],
-            ['id' => 17, 'nombre' => 'CENTRO DE REUMATOLOGIA E INFUSIÓN ROMA',      'direccion' => 'Sonora 119, Roma Norte, Cuauhtémoc, CDMX 06700'],
-            ['id' => 18, 'nombre' => 'CLIDITER CUAUHTEMOC',                          'direccion' => 'Durango 69, Roma, Cuauhtémoc, CDMX 06700'],
-            ['id' => 19, 'nombre' => 'INFUZONE ALVARO OBREGON',                      'direccion' => 'Sur 132-118 Int 103, Las Américas, Álvaro Obregón, CDMX 01120'],
-            ['id' => 20, 'nombre' => 'ONCARE TREATMENT CENTER NAPOLES',              'direccion' => 'Viad. Río Becerra 27, Nápoles, Benito Juárez, CDMX 03810'],
-            ['id' => 21, 'nombre' => 'ONCOMED DEL VALLE SUR',                        'direccion' => 'San Francisco 1634, Del Valle Sur, Benito Juárez, CDMX 03100'],
-            ['id' => 23, 'nombre' => 'GLOBAL ONCOLOGY ROMA',                         'direccion' => 'Frontera 153, Roma Norte, Cuauhtémoc, CDMX 06700'],
-            ['id' => 24, 'nombre' => 'GLOBAL ONCOLOGY COYOACAN',                     'direccion' => 'Miguel Ángel de Quevedo 773, San Francisco, Coyoacán, CDMX 04200'],
-            ['id' => 25, 'nombre' => 'GLOBAL ONCOLOGY TLALPAN',                      'direccion' => 'Camino a Santa Teresa 1055-S Int 1192, Héroes de Padierna, Tlalpan, CDMX 10700'],
-            ['id' => 26, 'nombre' => 'GLOBAL ONCOLOGY CUAJIMALPA',                   'direccion' => 'Juárez 21-B09, Cuajimalpa de Morelos, CDMX 05000'],
-            ['id' => 27, 'nombre' => 'SETRAS CHIHUAHUA',                             'direccion' => 'Av. Antonio de Montes 3714, Parques de San Felipe, Chihuahua, Chih 31203'],
-            ['id' => 28, 'nombre' => 'GLOBAL ONCOLOGY GDL — LADRÓN DE GUEVARA',     'direccion' => 'Av. México 2472, Ladrón de Guevara, Guadalajara, Jal 44650'],
-            ['id' => 29, 'nombre' => 'GLOBAL ONCOLOGY GDL — COUNTRY',               'direccion' => 'Av. Circunvalación Jorge Álvarez del Castillo 1558, Lomas de Country, Guadalajara, Jal 44610'],
-            ['id' => 30, 'nombre' => 'GLOBAL ONCOLOGY MTY',                          'direccion' => 'Av. Cto. Frida Kahlo 180 Piso 7, Valle Oriente, San Pedro Garza García, NL 66260'],
-            ['id' => 31, 'nombre' => 'GLOBAL ONCOLOGY PUEBLA',                       'direccion' => '7 Sur 415, Alpha 2, Puebla, Pue 72424'],
-            ['id' => 32, 'nombre' => 'RENACER CENTRO DE INFUSION DE QUIMIOTERAPIA', 'direccion' => 'Av. Huayacán SM311 MZ30 L03, Álamos 1, Benito Juárez, QRoo 77533'],
-            ['id' => 33, 'nombre' => 'ONCOMED QUERETARO',                            'direccion' => 'Blvd. Bernardo Quintana Arrioja 4060, San Pablo, Querétaro, Qro 76125'],
-            ['id' => 34, 'nombre' => 'UNIDAD MÉDICA ONCO-HEMATOLÓGICA UMO PUEBLA',  'direccion' => '7 Sur 4515, Alpha 2, Puebla, Pue 72424'],
-            ['id' => 35, 'nombre' => 'RED OSMO OAXACA',                              'direccion' => 'Humboldt 302, Centro, Oaxaca de Juárez, Oax 68000'],
-            ['id' => 36, 'nombre' => 'RED OSMO MERIDA',                              'direccion' => 'Calle 23 #112, México, Mérida, Yuc 97125'],
-            ['id' => 37, 'nombre' => 'CIMA AGUASCALIENTES',                          'direccion' => 'Av. Independencia 2130-A, Trojes de Alonso, Aguascalientes, Ags 20116'],
-            ['id' => 38, 'nombre' => 'ONCOLOGICO POTOSINO',                          'direccion' => 'La Mora 139, Fracc. del Parque, San Luis Potosí, SLP 78209'],
-            ['id' => 39, 'nombre' => 'CHOP TOLUCA',                                  'direccion' => 'Fernando Quiroz 416, Federal, Toluca, EdoMex 50120'],
-            ['id' => 40, 'nombre' => 'CENTRO HEMATOLÓGICO HOPE SLP',                'direccion' => 'Real de Lomas 150, Las Lomas 4a Secc, San Luis Potosí, SLP 78216'],
-            ['id' => 41, 'nombre' => 'CENTRO HEMATOLÓGICO HOPE GDL',                'direccion' => 'México 2582, Ladrón de Guevara, Guadalajara, Jal 44600'],
-            ['id' => 42, 'nombre' => 'NOVOINFUSE SATELITE',                          'direccion' => 'Cto. de Médicos 10 Cons. 15, Cd. Satélite, Naucalpan, EdoMex 53100'],
-            ['id' => 43, 'nombre' => 'IDeCSa',                                       'direccion' => 'Viaducto Tlalpan 1013-A, Polotlan, Tlalpan, CDMX 14090'],
-            ['id' => 44, 'nombre' => 'IPHARMA',                                      'direccion' => 'Celaya 322, Mitras, Monterrey, NL 64460'],
-            ['id' => 45, 'nombre' => 'GRUPO INTEPRO',                                'direccion' => 'Av. Guadalupe 4819, UNIVA, Zapopan, Jal 45034'],
-            ['id' => 46, 'nombre' => 'ATRYS HEALTH',                                 'direccion' => 'Ave. Ferrocarril Central Col. 709, Los Laureles 1a Secc, Celaya, Gto 38020'],
+            ['nombre' => 'Laboratorios del Carmen',                          'direccion' => 'Gobernador Rico 9981, Gabilondo, Tijuana, Baja California C.P. 22044'],
+            ['nombre' => 'Laboratorio Vives',                                'direccion' => 'Avenida 1 Norte Ote. 1117, Col. Hidalgo, Tuxtla Gutiérrez, Chiapas C.P. 29000'],
+            ['nombre' => 'Laboratorio de análisis clínicos y microbiológicos CAM', 'direccion' => 'Av. Prol. Teófilo Borunda 1418, Cuauhtémoc, Zona Centro II, Chihuahua C.P. 31020'],
+            ['nombre' => 'Laboratorio Diagnova',                             'direccion' => 'Calle 23 de abril 54, San Pedro Xalpa, Azcapotzalco, CDMX C.P. 02719'],
+            ['nombre' => 'Laboratorio Hidalgo Maldonado',                    'direccion' => 'Xicoténcatl 213, Zona Centro, Saltillo, Coahuila C.P. 25000'],
+            ['nombre' => 'Laboratorio Crystal',                              'direccion' => 'Escobedo 1036, Primero de Cobián Centro, Torreón, Coahuila C.P. 27000'],
+            ['nombre' => 'Naive Laboratorios',                               'direccion' => 'Dr. Miguel Galindo 224, Colima Centro, Colima C.P. 28000'],
+            ['nombre' => 'Laboratorio Arquímedes & Dorsch',                  'direccion' => 'Mariano Matamoros 127, San Jose Guadalupe Otzacatipan, Toluca, Estado de México C.P. 50230'],
+            ['nombre' => 'ProMédica Laboratorio de Análisis Clínicos',       'direccion' => 'Avenida Solidaridad 218, Parque de Poblamiento 1a. Secc., Pachuca, Hidalgo C.P. 42032'],
+            ['nombre' => 'Laboratorios Quezada',                             'direccion' => 'Avenida Prisciliano Sánchez Sur 120, Centro, Tepic, Nayarit C.P. 63000'],
+            ['nombre' => 'Oncocharité',                                      'direccion' => '1a Avenida 1495, Colonia Las Cumbres, Monterrey, Nuevo León C.P. 64610'],
+            ['nombre' => 'CLADI',                                            'direccion' => 'Manuel Doblado 1330, Treviño, Monterrey, Nuevo León C.P. 64580'],
+            ['nombre' => 'Hidalgo Maldonado (Centro AVE)',                   'direccion' => 'Dr. Fernando Guajardo 155, Los Doctores, Monterrey, Nuevo León C.P. 64710'],
+            ['nombre' => 'Laboratorios LAB Sucursal Juárez',                 'direccion' => 'Benito Juárez 285 Ote., Primer Cuadro, Culiacán, Sinaloa C.P. 80000'],
+            ['nombre' => 'Laboratorio de Análisis Clínicos Los Arcos',       'direccion' => 'Olivares 2, Los Arcos, Hermosillo, Sonora C.P. 83250'],
+            ['nombre' => 'Laboratorio Pasteur',                              'direccion' => 'Ignacio Allende 105 B, Centro, Ciudad Obregón, Sonora C.P. 85000'],
+            ['nombre' => 'López Laboratorio',                                'direccion' => 'Hermosillo 425-2, Colonia Granja, Nogales, Sonora C.P. 84065'],
+            ['nombre' => 'Bioquim Laboratorio Clínico Zamarripa',            'direccion' => 'Herón Ramirez 786, Colonia Rodriguez, Reynosa, Tamaulipas C.P. 88630'],
+            ['nombre' => 'Laboratorio Clínico Pasteur',                      'direccion' => 'Necaxa 300 esq. con Quintero, El Llano, Ciudad Madero, Tamaulipas C.P. 89570'],
+            ['nombre' => 'Laboratorio ABG',                                  'direccion' => 'Avenida Valentín Gómez Farías 1849, Col. Supermanzana Ver., Veracruz C.P. 91900'],
+            ['nombre' => 'Laboratorio Cornu',                                'direccion' => 'Poniente 4, 26, Centro, Orizaba, Veracruz C.P. 94300'],
+            ['nombre' => 'Laboratorios CYALAB',                              'direccion' => 'Calle 20 E por 25, Limones, Mérida, Yucatán C.P. 97219'],
+            ['nombre' => 'Laboratorio de Análisis Santa Fé',                 'direccion' => 'Plaza Siglo 21, Blvd. Manuel Talamas Camandari 761, Lote Bravo, Ciudad Juárez, Chihuahua C.P. 32695'],
+            ['nombre' => 'Laboratorio Juárez',                               'direccion' => 'Sauces 512, Reforma, Oaxaca C.P. 68050'],
+            ['nombre' => 'Clínicos Eureka Laboratorios',                     'direccion' => 'Avenida Fray Luis de León 3071-local 14, Centro Sur, Querétaro C.P. 76093'],
         ];
 
         foreach ($centros as $centro) {
             DB::table('centros_agenda')->insert([
-                'id'         => $centro['id'],
                 'nombre'     => $centro['nombre'],
                 'direccion'  => $centro['direccion'],
                 'activo'     => true,
@@ -55,7 +47,6 @@ class CentrosAgendaSeeder extends Seeder
             ]);
         }
 
-        // Ajustar el AUTO_INCREMENT para que no colisione con los IDs legacy
         DB::statement('ALTER TABLE centros_agenda AUTO_INCREMENT = 100');
     }
 }

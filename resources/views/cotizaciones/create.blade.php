@@ -124,6 +124,8 @@
                                     <option value="">—</option>
                                     <option value="Dr."  @selected(old('medico_prefijo') === 'Dr.')>Dr.</option>
                                     <option value="Dra." @selected(old('medico_prefijo') === 'Dra.')>Dra.</option>
+                                    <option value="Sr."  @selected(old('medico_prefijo') === 'Sr.')>Sr.</option>
+                                    <option value="Sra." @selected(old('medico_prefijo') === 'Sra.')>Sra.</option>
                                 </select>
                             </div>
                             <div>
@@ -398,7 +400,7 @@
             {{-- Navegación --}}
             <div class="mt-6 flex items-center justify-between">
                 <button type="button"
-                        @click="paso === 1 ? window.location.href='{{ route('cotizaciones.index') }}' : paso--"
+                        @click="paso === 1 ? window.location.href='{{ route("cotizaciones.index") }}' : paso--"
                         class="inline-flex items-center gap-2 rounded-lg border border-gray-200 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors">
                     <svg xmlns="http://www.w3.org/2000/svg" class="size-4" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
@@ -428,25 +430,31 @@
     </div>
 
     <script>
-        const _medicos   = @json($medicos->map(fn($m) => [
-            'id'             => $m->id,
-            'nombre_completo'=> $m->nombre_completo,
-            'especialidad'   => $m->especialidad ?? '',
-            'hospital'       => $m->hospital?->nombre ?? '',
-        ]));
+        @php
+            $medicosJs = $medicos->map(fn($m) => [
+                'id'              => $m->id,
+                'nombre_completo' => $m->nombre_completo,
+                'especialidad'    => $m->especialidad ?? '',
+                'hospital'        => $m->hospital?->nombre ?? '',
+            ]);
 
-        const _hospitales = @json($hospitales->map(fn($h) => [
-            'id'          => $h->id,
-            'nombre'      => $h->nombre,
-            'procedencia' => $h->procedencia ?? '',
-        ]));
+            $hospitalesJs = $hospitales->map(fn($h) => [
+                'id'          => $h->id,
+                'nombre'      => $h->nombre,
+                'procedencia' => $h->procedencia ?? '',
+            ]);
 
-        const _estudios = @json($estudios->map(fn($e) => [
-            'id'              => $e->id,
-            'nombre'          => $e->nombre,
-            'area_terapeutica'=> $e->area_terapeutica ?? '',
-            'precio_unitario' => (float) $e->precio_unitario,
-        ]));
+            $estudiosJs = $estudios->map(fn($e) => [
+                'id'              => $e->id,
+                'nombre'          => $e->nombre,
+                'area_terapeutica'=> $e->area_terapeutica ?? '',
+                'precio_unitario' => (float) $e->precio_unitario,
+            ]);
+        @endphp
+
+        const _medicos    = @json($medicosJs);
+        const _hospitales = @json($hospitalesJs);
+        const _estudios   = @json($estudiosJs);
 
         function wizardCotizacion(pasoInicial = 1) {
             return {
@@ -454,14 +462,14 @@
                 pasos: ['Médico', 'Institución', 'Estudios'],
 
                 // Paso 1
-                medicoModo: '{{ old('medico_modo', 'existente') }}',
+                medicoModo: '{{ old("medico_modo", "existente") }}',
                 medicoId: {{ old('medico_id') ? old('medico_id') : 'null' }},
                 medicoLabel: '',
                 medicoEspecialidadLabel: '',
                 busquedaMedico: '',
 
                 // Paso 2
-                hospitalModo: '{{ old('hospital_modo', 'existente') }}',
+                hospitalModo: '{{ old("hospital_modo", "existente") }}',
                 hospitalId: {{ old('hospital_id') ? old('hospital_id') : 'null' }},
                 hospitalLabel: '',
                 hospitalProcedenciaLabel: '',

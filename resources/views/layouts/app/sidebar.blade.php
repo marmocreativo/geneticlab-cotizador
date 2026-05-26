@@ -46,6 +46,12 @@
                         {{ __('Centros') }}
                     </flux:sidebar.item>
                 </flux:sidebar.group>
+                
+                <flux:sidebar.group :heading="__('Sistema')" class="grid">
+                    <flux:sidebar.item icon="users" :href="route('usuarios.index')" :current="request()->routeIs('usuarios.*')">
+                        {{ __('Usuarios') }}
+                    </flux:sidebar.item>
+                </flux:sidebar.group>
             </flux:sidebar.nav>
 
             <flux:spacer />

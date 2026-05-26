@@ -5,6 +5,11 @@
             <h1 class="text-2xl font-semibold text-gray-900">Usuarios</h1>
             <p class="text-sm text-gray-500">Cuentas con acceso al sistema</p>
         </div>
+        <a href="{{ route('usuarios.create') }}"
+        class="rounded-lg px-4 py-2 text-sm font-medium text-white hover:opacity-90 transition-colors"
+        style="background-color:#002745;">
+            + Nuevo usuario
+        </a>
     </div>
 
     <div class="overflow-hidden rounded-xl border border-gray-200 bg-white">
@@ -14,7 +19,7 @@
                     <th class="px-4 py-3 text-xs font-medium uppercase tracking-wide text-gray-500">Usuario</th>
                     <th class="px-4 py-3 text-xs font-medium uppercase tracking-wide text-gray-500">Correo</th>
                     <th class="px-4 py-3 text-xs font-medium uppercase tracking-wide text-gray-500">Registro</th>
-                    <th class="px-4 py-3 text-xs font-medium uppercase tracking-wide text-gray-500">2FA</th>
+                    <th class="px-4 py-3 text-xs font-medium uppercase tracking-wide text-gray-500"></th>
                 </tr>
             </thead>
             <tbody class="divide-y divide-gray-100">
@@ -34,15 +39,21 @@
                             {{ $usuario->created_at->format('d/m/Y') }}
                         </td>
                         <td class="px-4 py-3">
-                            @if($usuario->two_factor_confirmed_at)
-                                <span class="inline-flex items-center rounded-full bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20">
-                                    Activo
-                                </span>
-                            @else
-                                <span class="inline-flex items-center rounded-full bg-gray-100 px-2 py-1 text-xs font-medium text-gray-500">
-                                    No configurado
-                                </span>
-                            @endif
+                            <div class="flex items-center justify-end gap-2">
+                                <a href="{{ route('usuarios.edit', $usuario) }}"
+                                class="rounded-lg border border-gray-200 px-3 py-1.5 text-xs font-medium text-gray-600 hover:bg-gray-50 transition-colors">
+                                    Editar
+                                </a>
+                                <form method="POST" action="{{ route('usuarios.destroy', $usuario) }}"
+                                    onsubmit="return confirm('¿Eliminar este usuario?')">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit"
+                                            class="rounded-lg px-3 py-1.5 text-xs font-medium text-red-600 hover:bg-red-50 transition-colors">
+                                        Eliminar
+                                    </button>
+                                </form>
+                            </div>
                         </td>
                     </tr>
                 @empty

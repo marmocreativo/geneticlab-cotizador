@@ -62,7 +62,9 @@ Route::middleware('auth')->group(function () {
     });
 
     // Usuarios
-    Route::resource('usuarios', UsuarioController::class)->only(['index']);
+    Route::resource('usuarios', UsuarioController::class)
+        ->only(['index', 'create', 'store', 'edit', 'update', 'destroy'])
+        ->parameters(['usuarios' => 'usuario']);
 
 });
 

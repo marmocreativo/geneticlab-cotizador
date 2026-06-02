@@ -5,9 +5,21 @@
         'realizada'  => 'bg-gray-200 text-gray-600',
         'cancelada'  => 'bg-red-100 text-red-700',
     ];
+
+    $sexoLabel = '';
+    if ($cita->paciente->sexo === 'M') $sexoLabel = 'Masculino';
+    elseif ($cita->paciente->sexo === 'F') $sexoLabel = 'Femenino';
+    elseif ($cita->paciente->sexo) $sexoLabel = 'Otro';
+
+    $datosPaciente = '';
+    if ($cita->paciente->edad) $datosPaciente .= "Edad: {$cita->paciente->edad} años";
+    if ($cita->paciente->edad && $sexoLabel) $datosPaciente .= ' | ';
+    if ($sexoLabel) $datosPaciente .= "Sexo: {$sexoLabel}";
+
     $textoWa =
         "Estimado/a {$cita->paciente->nombre_display},\n\n" .
         "Por medio del presente mensaje, GeneticLab le confirma su cita:\n\n" .
+        ($datosPaciente ? "Paciente: {$datosPaciente}\n" : "") .
         "Fecha: " . $cita->fecha->translatedFormat('l d \d\e F \d\e Y') . "\n" .
         "Hora: {$cita->hora}\n" .
         "Centro: {$cita->centro->nombre}" .

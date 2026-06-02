@@ -20,7 +20,7 @@
     <form method="POST"
           action="{{ isset($paciente) ? route('agenda.pacientes.update', $paciente) : route('agenda.pacientes.store') }}"
           class="flex flex-col gap-6 max-w-2xl"
-          x-data="{ anonimo: {{ old('anonimo', $paciente->anonimo ?? false) ? 'true' : 'false' }} }">
+          x-data="{ anonimo: {{ old('anonimo', isset($paciente) && $paciente->anonimo ? '1' : '') ? 'true' : 'false' }} }"
         @csrf
         @isset($paciente)
             @method('PUT')
@@ -92,7 +92,7 @@
                             <label class="mb-1 block text-sm font-medium text-gray-700">Fecha de nacimiento</label>
                             <input type="date"
                                    name="fecha_nacimiento"
-                                   value="{{ old('fecha_nacimiento', $paciente->fecha_nacimiento?->toDateString() ?? '') }}"
+                                   value="{{ old('fecha_nacimiento', isset($paciente) ? $paciente->fecha_nacimiento?->toDateString() : '') }}"
                                    class="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500" />
                         </div>
                         <div>

@@ -79,7 +79,7 @@
                             @foreach($pacientes as $p)
                                 <label :class="pacienteId == {{ $p->id }} ? 'bg-blue-50 border-l-2 border-blue-600' : 'hover:bg-gray-50'"
                                        class="flex cursor-pointer items-center gap-3 px-4 py-3 transition-colors"
-                                       x-show="'{{ strtolower($p->nombre_display . ' ' . $p->folio) }}'.includes(busquedaPaciente.toLowerCase())">
+                                       x-show="busquedaPaciente === '' || '{{ strtolower($p->nombre_display . ' ' . $p->folio) }}'.includes(busquedaPaciente.toLowerCase())">
                                     <input type="radio"
                                            name="paciente_id"
                                            value="{{ $p->id }}"
@@ -137,9 +137,9 @@
 
                             <div class="grid grid-cols-2 gap-3">
                                 <div>
-                                    <label class="mb-1 block text-xs font-medium text-gray-700">Fecha de nacimiento</label>
-                                    <input type="date" name="fecha_nacimiento" value="{{ old('fecha_nacimiento') }}"
-                                           class="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500" />
+                                    <label class="mb-1 block text-xs font-medium text-gray-700">Edad</label>
+                                    <input type="number" name="edad" value="{{ old('edad') }}" min="0" max="120" placeholder="años"
+                                        class="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500" />
                                 </div>
                                 <div>
                                     <label class="mb-1 block text-xs font-medium text-gray-700">Sexo</label>
@@ -201,15 +201,15 @@
                     {{-- Centro existente --}}
                     <div x-show="centroTipo === 'existente'" class="space-y-3">
                         <input type="text"
-                               x-model="busquedaCentro"
-                               placeholder="Buscar centro..."
-                               class="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-900 placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500" />
+       x-model="busquedaCentro"
+       placeholder="Buscar por nombre, ciudad o estado..."
+       class="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-900 placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500" />
 
                         <div class="max-h-64 overflow-y-auto rounded-lg border border-gray-200 divide-y divide-gray-100">
                             @foreach($centros as $c)
                                 <label :class="centroId == {{ $c->id }} ? 'bg-blue-50 border-l-2 border-blue-600' : 'hover:bg-gray-50'"
                                        class="flex cursor-pointer items-center gap-3 px-4 py-3 transition-colors"
-                                       x-show="'{{ strtolower($c->nombre) }}'.includes(busquedaCentro.toLowerCase())">
+                                       x-show="busquedaCentro === '' || '{{ strtolower($c->nombre . ' ' . $c->direccion) }}'.includes(busquedaCentro.toLowerCase())">
                                     <input type="radio"
                                            name="centro_id"
                                            value="{{ $c->id }}"
@@ -267,7 +267,7 @@
                             </div>
                             <div>
                                 <label class="mb-1 block text-sm font-medium text-gray-700">
-                                    Hora <span class="text-red-500">*</span>
+                                    A partir de las: <span class="text-red-500">*</span>
                                 </label>
                                 <input type="time"
                                        name="hora"
@@ -353,7 +353,7 @@
                 pasos: ['Paciente', 'Centro', 'Fecha y hora'],
 
                 // Paso 1
-                pacienteTipo: '{{ old("paciente_tipo", "existente") }}',
+                pacienteTipo: '{{ old("paciente_tipo", "nuevo") }}',
                 pacienteId: '{{ old("paciente_id") }}',
                 busquedaPaciente: '',
                 anonimo: {{ old('anonimo', 0) ? 'true' : 'false' }},

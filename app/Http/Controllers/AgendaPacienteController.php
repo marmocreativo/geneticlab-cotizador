@@ -41,6 +41,7 @@ class AgendaPacienteController extends Controller
             'apellido_paterno' => 'nullable|string|max:100',
             'apellido_materno' => 'nullable|string|max:100',
             'fecha_nacimiento' => 'nullable|date',
+            'edad'             => 'nullable|integer|min:0|max:120',
             'sexo'             => 'nullable|in:M,F,O',
             'whatsapp'         => 'nullable|string|max:20',
             'correo'           => 'nullable|email|max:150',

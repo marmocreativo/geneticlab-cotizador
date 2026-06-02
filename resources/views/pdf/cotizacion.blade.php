@@ -4,9 +4,9 @@
     <meta charset="UTF-8">
     <style>
         body { font-family: DejaVu Sans, sans-serif; font-size: 12px; color: #333; margin: 0; padding: 24px; }
-        .header { margin-bottom: 24px; }
+        .header { margin-bottom: 24px;}
+        .fecha { text-align: right; color: #666; font-size: 11px; }
         .header-logo { margin-bottom: 4px; }
-        .fecha { text-align: right; color: #666; font-size: 11px; margin-top: -20px; }
         .destinatario { margin-bottom: 20px; }
         .destinatario strong { display: block; font-size: 13px; color: #002745; text-transform: uppercase; }
         .intro { margin-bottom: 20px; color: #444; }
@@ -26,15 +26,17 @@
 <body>
 
     <div class="header">
-        <div class="header-logo">
+        <div>
             <img src="data:image/png;base64,{{ base64_encode(file_get_contents(public_path('logo_azul.png'))) }}" 
-                style="height: 40px; width: auto;" />
+                style="height: 60px; width: auto;" />
         </div>
-        <div class="fecha">Ciudad de México a {{ now()->isoFormat('D [de] MMMM [de] YYYY') }}</div>
     </div>
 
     <div class="destinatario">
-        <strong>{{ $cotizacion->medico?->nombre_completo ?? '' }}</strong>
+        <div style="display: flex; justify-content: space-between; align-items: baseline;">
+            <strong>{{ $cotizacion->medico?->nombre_completo ?? '' }}</strong>
+            <span style="font-size: 11px; color: #666;">Ciudad de México a {{ now()->isoFormat('D [de] MMMM [de] YYYY') }}</span>
+        </div>
         {{ $cotizacion->medico?->especialidad ?? '' }}<br>
         {{ $cotizacion->hospital?->nombre ?? '' }}
     </div>

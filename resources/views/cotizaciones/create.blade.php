@@ -93,7 +93,7 @@
                         </template>
 
                         {{-- Lista filtrada --}}
-                        <template x-if="!medicoId && busquedaMedico.length > 1">
+                        <template x-if="!medicoId">
                             <div class="flex flex-col gap-1">
                                 <template x-for="m in medicosFiltrados()" :key="m.id">
                                     <button type="button"
@@ -225,7 +225,7 @@
                             </div>
                         </template>
 
-                        <template x-if="!hospitalId && busquedaHospital.length > 1">
+                        <template x-if="!hospitalId">
                             <div class="flex flex-col gap-1">
                                 <template x-for="h in hospitalesFiltrados()" :key="h.id">
                                     <button type="button"
@@ -291,7 +291,7 @@
                            class="mb-3 w-full rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-900 placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500" />
 
                     {{-- Resultados búsqueda --}}
-                    <template x-if="busquedaEstudio.length > 1">
+                    <template x-if="true">
                         <div class="mb-4 flex flex-col gap-1">
                             <template x-for="e in estudiosFiltrados()" :key="e.id">
                                 <button type="button"
@@ -462,7 +462,7 @@
                 pasos: ['Médico', 'Institución', 'Estudios'],
 
                 // Paso 1
-                medicoModo: '{{ old("medico_modo", "existente") }}',
+                medicoModo: '{{ old("medico_modo", "nuevo") }}',
                 medicoId: {{ old('medico_id') ? old('medico_id') : 'null' }},
                 medicoLabel: '',
                 medicoEspecialidadLabel: '',
@@ -502,9 +502,9 @@
                 medicosFiltrados() {
                     const q = this.busquedaMedico.toLowerCase();
                     return _medicos.filter(m =>
-                        m.nombre_completo.toLowerCase().includes(q) ||
+                        !q || m.nombre_completo.toLowerCase().includes(q) ||
                         m.especialidad.toLowerCase().includes(q)
-                    ).slice(0, 6);
+                    ).slice(0, 10);
                 },
 
                 seleccionarMedico(m) {
@@ -517,8 +517,8 @@
                 hospitalesFiltrados() {
                     const q = this.busquedaHospital.toLowerCase();
                     return _hospitales.filter(h =>
-                        h.nombre.toLowerCase().includes(q)
-                    ).slice(0, 6);
+                        !q || h.nombre.toLowerCase().includes(q)
+                    ).slice(0, 10);
                 },
 
                 seleccionarHospital(h) {
@@ -533,9 +533,9 @@
                     const ids = this.estudios.map(e => e.id);
                     return _estudios.filter(e =>
                         !ids.includes(e.id) &&
-                        (e.nombre.toLowerCase().includes(q) ||
-                         e.area_terapeutica.toLowerCase().includes(q))
-                    ).slice(0, 8);
+                        (!q || e.nombre.toLowerCase().includes(q) ||
+                        e.area_terapeutica.toLowerCase().includes(q))
+                    ).slice(0, 20);
                 },
 
                 agregarEstudio(e) {

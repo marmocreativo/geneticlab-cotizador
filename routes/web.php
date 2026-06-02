@@ -14,6 +14,9 @@ use App\Http\Controllers\AgendaCentroController;
 // ── Pública ───────────────────────────────────────────
 Route::get('/', fn() => view('welcome'))->name('welcome');
 
+Route::get('cotizaciones/{cotizacion}/pdf/ver', [CotizacionController::class, 'verPdf'])
+    ->name('cotizaciones.pdf.ver');
+
 Route::middleware('auth')->group(function () {
 
     // Dashboard
@@ -21,6 +24,11 @@ Route::middleware('auth')->group(function () {
     Route::redirect('/home', '/dashboard')->name('home');
 
     // Cotizaciones
+    Route::get('cotizaciones/{cotizacion}/pdf', [CotizacionController::class, 'descargarPdf'])
+    ->name('cotizaciones.pdf');
+
+    
+    
     Route::resource('cotizaciones', CotizacionController::class)
         ->only(['index', 'create', 'store', 'show', 'destroy'])
         ->parameters(['cotizaciones' => 'cotizacion']);

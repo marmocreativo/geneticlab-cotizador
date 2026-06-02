@@ -186,4 +186,23 @@ class CotizacionController extends Controller
 
         return back()->with('success', 'Cotización enviada a ' . $request->email);
     }
+
+    public function descargarPdf(Cotizacion $cotizacion)
+    {
+        $cotizacion->load(['medico.hospital', 'hospital', 'estudios.estudio']);
+
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('pdf.cotizacion', compact('cotizacion'));
+
+        return $pdf->download($cotizacion->folio . '.pdf');
+    }
+
+    public function verPdf(Cotizacion $cotizacion)
+    {
+        $cotizacion->load(['medico.hospital', 'hospital', 'estudios.estudio']);
+
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('pdf.cotizacion', compact('cotizacion'));
+
+        return $pdf->stream($cotizacion->folio . '.pdf');
+    }
+
 }

@@ -13,7 +13,7 @@ class Paciente extends Model
     protected $fillable = [
         'folio', 'anonimo',
         'iniciales', 'nombre', 'apellido_paterno', 'apellido_materno',
-        'fecha_nacimiento', 'sexo',
+        'fecha_nacimiento', 'edad', 'sexo',
         'whatsapp', 'correo', 'notas',
     ];
 

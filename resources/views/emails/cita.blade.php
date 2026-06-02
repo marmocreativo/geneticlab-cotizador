@@ -53,6 +53,20 @@
                     @endif
                 </td>
             </tr>
+            @if($cita->paciente->edad || $cita->paciente->sexo)
+            <tr>
+                <td class="label">Paciente</td>
+                <td>
+                    {{ $cita->paciente->nombre_display }}
+                    @if($cita->paciente->edad)
+                        &nbsp;·&nbsp; {{ $cita->paciente->edad }} años
+                    @endif
+                    @if($cita->paciente->sexo)
+                        &nbsp;·&nbsp; {{ match($cita->paciente->sexo) { 'M' => 'Masculino', 'F' => 'Femenino', default => 'Otro' } }}
+                    @endif
+                </td>
+            </tr>
+            @endif
             <tr>
                 <td class="label">Estado</td>
                 <td>{{ ucfirst($cita->estado) }}</td>

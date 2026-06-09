@@ -181,6 +181,40 @@ class AgendaController extends Controller
         return back()->with('success', 'Estado actualizado.');
     }
 
+    public function edit(Cita $cita)
+    {
+        $cita->load(['paciente', 'centro']);
+        $pacientes = Paciente::orderBy('apellido_paterno')->get();
+        $centros   = CentroAgenda::where('activo', true)->orderBy('nombre')->get();
+
+        return view('agenda.citas.edit', compact('cita', 'pacientes', 'centros'));
+    }
+
+    public function update(Request $request, Cita $cita)
+    {
+        $request->validate([
+            'paciente_id' => 'required|exists:pacientes,id',
+            'centro_id'   => 'required|exists:centros_agenda,id',
+            'fecha'       => 'required|date',
+            'hora'        => 'required',
+            'estado'      => 'required|in:programada,confirmada,realizada,cancelada',
+            'notas'       => 'nullable|string',
+        ]);
+
+        $cita->update([
+            'paciente_id' => $request->paciente_id,
+            'centro_id'   => $request->centro_id,
+            'fecha'       => $request->fecha,
+            'hora'        => $request->hora,
+            'estado'      => $request->estado,
+            'notas'       => $request->notas,
+        ]);
+
+        return redirect()
+            ->route('agenda.calendario', ['fecha' => $cita->fecha->toDateString()])
+            ->with('success', 'Cita actualizada correctamente.');
+    }
+
     public function destroy(Cita $cita)
     {
         $fecha = $cita->fecha->toDateString();
@@ -201,6 +235,7 @@ class AgendaController extends Controller
         $cita->load(['paciente', 'centro']);
 
         \Illuminate\Support\Facades\Mail::to($request->email)
+            ->cc('agendatucita@geneticlab.mx')
             ->send(new \App\Mail\CitaMail($cita));
 
         return response()->json(['ok' => true]);

@@ -49,28 +49,16 @@
         </div>
 
         {{-- Gráfica de serie temporal --}}
-        <div
-            class="rounded-xl border border-zinc-200 bg-white p-6 shadow-sm dark:border-zinc-700 dark:bg-zinc-900"
-            x-data="{
-                agrupar: '{{ $agrupar }}',
-                periodos: {{ Js::from($periodos->values()) }},
-                get labels() { return this.periodos.map(p => p.label) },
-                get cotizaciones() { return this.periodos.map(p => p.cotizaciones) },
-                get citas() { return this.periodos.map(p => p.citas) },
-                get maxVal() {
-                    const all = [...this.cotizaciones, ...this.citas];
-                    return Math.max(...all, 1);
-                },
-                barWidth() {
-                    return Math.max(4, Math.floor(560 / Math.max(this.periodos.length, 1)) - 4);
-                }
-            }"
-        >
+        @php
+            $labelsChart    = $periodos->map(fn($p) => $p['label'])->values();
+            $cotizChart     = $periodos->map(fn($p) => $p['cotizaciones'])->values();
+            $citasChart     = $periodos->map(fn($p) => $p['citas'])->values();
+        @endphp
+
+        <div class="rounded-xl border border-zinc-200 bg-white p-6 shadow-sm dark:border-zinc-700 dark:bg-zinc-900">
             <p class="mb-4 text-sm font-medium text-zinc-700 dark:text-zinc-300">
                 Actividad por {{ $agrupar === 'dia' ? 'día' : 'semana' }}
             </p>
-
-            {{-- Leyenda --}}
             <div class="mb-4 flex gap-4 text-xs text-zinc-500 dark:text-zinc-400">
                 <span class="flex items-center gap-1.5">
                     <span class="inline-block h-2.5 w-2.5 rounded-full bg-blue-500"></span>
@@ -81,81 +69,65 @@
                     Citas
                 </span>
             </div>
-
-            {{-- Gráfica de barras SVG --}}
-            <div class="w-full overflow-x-auto">
-                <svg
-                    x-ref="chart"
-                    class="w-full"
-                    style="min-width: 320px; height: 220px;"
-                    viewBox="0 0 700 220"
-                    preserveAspectRatio="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                >
-                    {{-- Líneas de guía --}}
-                    <template x-for="i in [0, 1, 2, 3, 4]">
-                        <line
-                            :x1="40"
-                            :y1="20 + i * 40"
-                            :x2="680"
-                            :y2="20 + i * 40"
-                            stroke="currentColor"
-                            stroke-width="0.5"
-                            class="text-zinc-200 dark:text-zinc-700"
-                        />
-                    </template>
-
-                    {{-- Etiquetas eje Y --}}
-                    <template x-for="i in [0, 1, 2, 3, 4]">
-                        <text
-                            :x="36"
-                            :y="24 + i * 40"
-                            text-anchor="end"
-                            font-size="9"
-                            fill="currentColor"
-                            class="text-zinc-400"
-                            x-text="Math.round(maxVal - (maxVal / 4) * i)"
-                        ></text>
-                    </template>
-
-                    {{-- Barras --}}
-                    <template x-for="(p, idx) in periodos">
-                        <g>
-                            {{-- Barra cotizaciones (azul) --}}
-                            <rect
-                                :x="44 + idx * (640 / periodos.length)"
-                                :y="180 - (p.cotizaciones / maxVal) * 160"
-                                :width="barWidth() / 2"
-                                :height="(p.cotizaciones / maxVal) * 160"
-                                rx="2"
-                                fill="#3b82f6"
-                                opacity="0.85"
-                            />
-                            {{-- Barra citas (verde) --}}
-                            <rect
-                                :x="44 + idx * (640 / periodos.length) + barWidth() / 2 + 2"
-                                :y="180 - (p.citas / maxVal) * 160"
-                                :width="barWidth() / 2"
-                                :height="(p.citas / maxVal) * 160"
-                                rx="2"
-                                fill="#10b981"
-                                opacity="0.85"
-                            />
-                            {{-- Etiqueta eje X --}}
-                            <text
-                                :x="44 + idx * (640 / periodos.length) + barWidth() / 2"
-                                y="198"
-                                text-anchor="middle"
-                                font-size="8"
-                                fill="currentColor"
-                                class="text-zinc-400"
-                                x-text="p.label"
-                            ></text>
-                        </g>
-                    </template>
-                </svg>
+            <div style="position:relative; height:220px;">
+                <canvas id="actividadChart"></canvas>
             </div>
         </div>
+
+        <script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
+        <script>
+        (function() {
+            const labels    = @json($labelsChart);
+            const cotizData = @json($cotizChart);
+            const citasData = @json($citasChart);
+
+            const ctx = document.getElementById('actividadChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: 'Cotizaciones',
+                            data: cotizData,
+                            borderColor: '#3b82f6',
+                            backgroundColor: 'rgba(59,130,246,0.1)',
+                            borderWidth: 2,
+                            pointRadius: 3,
+                            tension: 0.3,
+                            fill: true,
+                        },
+                        {
+                            label: 'Citas',
+                            data: citasData,
+                            borderColor: '#10b981',
+                            backgroundColor: 'rgba(16,185,129,0.1)',
+                            borderWidth: 2,
+                            pointRadius: 3,
+                            tension: 0.3,
+                            fill: true,
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: {
+                            grid: { display: false },
+                            ticks: { font: { size: 11 }, color: '#a1a1aa' }
+                        },
+                        y: {
+                            beginAtZero: true,
+                            ticks: { stepSize: 1, precision: 0, color: '#a1a1aa', font: { size: 11 } },
+                            grid: { color: 'rgba(0,0,0,0.05)' }
+                        }
+                    }
+                }
+            });
+        })();
+        </script>
 
         {{-- Top centros e instituciones --}}
         <div class="grid gap-4 lg:grid-cols-2">

@@ -151,6 +151,57 @@ class CotizacionController extends Controller
         return view('cotizaciones.show', compact('cotizacion'));
     }
 
+    public function edit(Cotizacion $cotizacion)
+    {
+        $cotizacion->load(['medico', 'hospital', 'estudios.estudio']);
+
+        $medicos    = Medico::where('activo', true)->orderBy('apellido')->get();
+        $hospitales = Hospital::orderBy('nombre')->get();
+        $estudios   = Estudio::where('activo', true)->orderBy('nombre')->get();
+
+        return view('cotizaciones.edit', compact('cotizacion', 'medicos', 'hospitales', 'estudios'));
+    }
+
+    public function update(Request $request, Cotizacion $cotizacion)
+    {
+        $validated = $request->validate([
+            'medico_id'    => 'required|exists:medicos,id',
+            'hospital_id'  => 'nullable|exists:hospitales,id',
+            'descuento'    => 'nullable|numeric|min:0|max:100',
+            'notas'        => 'nullable|string',
+            'valida_hasta' => 'nullable|date',
+            'estudios'     => 'required|array|min:1',
+            'estudios.*.id'       => 'required|exists:estudios,id',
+            'estudios.*.cantidad' => 'required|integer|min:1',
+            'estudios.*.precio'   => 'required|numeric|min:0',
+        ]);
+
+        $cotizacion->update([
+            'medico_id'    => $validated['medico_id'],
+            'hospital_id'  => $validated['hospital_id'] ?? null,
+            'descuento'    => $validated['descuento'] ?? 0,
+            'notas'        => $validated['notas'] ?? null,
+            'valida_hasta' => $validated['valida_hasta'] ?? null,
+        ]);
+
+        // Reemplazar renglones de estudios
+        $cotizacion->estudios()->delete();
+
+        foreach ($validated['estudios'] as $item) {
+            $cotizacion->estudios()->create([
+                'estudio_id'      => $item['id'],
+                'cantidad'        => $item['cantidad'],
+                'precio_unitario' => $item['precio'],
+            ]);
+        }
+
+        $cotizacion->load('estudios');
+        $cotizacion->recalcular();
+
+        return redirect()->route('cotizaciones.show', $cotizacion)
+            ->with('success', "Cotización {$cotizacion->folio} actualizada correctamente.");
+    }
+
     public function destroy(Cotizacion $cotizacion)
     {
         $cotizacion->estudios()->delete();
@@ -180,6 +231,7 @@ class CotizacionController extends Controller
         $cotizacion->load(['medico.hospital', 'hospital', 'estudios.estudio']);
 
         \Illuminate\Support\Facades\Mail::to($request->email)
+            ->cc('agendatucita@geneticlab.mx')
             ->send(new \App\Mail\CotizacionMail($cotizacion));
 
         $cotizacion->update(['estado' => 'enviada']);

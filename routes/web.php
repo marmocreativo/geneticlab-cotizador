@@ -30,7 +30,7 @@ Route::middleware('auth')->group(function () {
     
     
     Route::resource('cotizaciones', CotizacionController::class)
-        ->only(['index', 'create', 'store', 'show', 'destroy'])
+        ->only(['index', 'create', 'store', 'show', 'edit', 'update', 'destroy'])
         ->parameters(['cotizaciones' => 'cotizacion']);
 
     Route::patch('cotizaciones/{cotizacion}/estado', [CotizacionController::class, 'actualizarEstado'])
@@ -56,6 +56,9 @@ Route::middleware('auth')->group(function () {
         // Nueva cita wizard
         Route::get('/nueva-cita',  [AgendaController::class, 'create'])->name('citas.create');
         Route::post('/nueva-cita', [AgendaController::class, 'store'])->name('citas.store');
+
+        Route::get('/citas/{cita}/edit',  [AgendaController::class, 'edit'])->name('citas.edit');
+        Route::put('/citas/{cita}',       [AgendaController::class, 'update'])->name('citas.update');
 
         Route::post('/citas/{cita}/enviar', [AgendaController::class, 'enviarCita'])->name('citas.enviar');
 

@@ -282,15 +282,22 @@
     </div>
 
     <script>
-        {{-- Pasar todas las citas al JS --}}
         @php
             $todasLasCitas = collect($citasPorDia)->map(fn($citas) =>
                 $citas->map(fn($c) => [
                     'id'      => $c->id,
                     'hora'    => $c->hora,
                     'estado'  => $c->estado,
-                    'paciente'=> $c->paciente->nombre_display,
                     'centro'  => $c->centro->nombre,
+                    'paciente'=> (function($p) {
+                        if ($p->anonimo) return 'Anónimo — ' . $p->folio;
+                        $nombre = trim(implode(' ', array_filter([
+                            $p->nombre,
+                            $p->apellido_paterno,
+                            $p->apellido_materno,
+                        ])));
+                        return $nombre ?: ($p->iniciales ?: $p->folio);
+                    })($c->paciente),
                 ])
             );
         @endphp

@@ -41,11 +41,19 @@
         </tbody>
     </table>
 
+    @php
+        $subtotalConDescuento = $cotizacion->subtotal - ($cotizacion->subtotal * ($cotizacion->descuento / 100));
+        $iva = $subtotalConDescuento * 0.16;
+        $totalConIva = $subtotalConDescuento + $iva;
+    @endphp
+
     @if ($cotizacion->descuento > 0)
     <p>Descuento aplicado: {{ $cotizacion->descuento }}%</p>
     @endif
 
-    <p class="total">Total: ${{ number_format($cotizacion->total, 2) }} MXN + IVA</p>
+    <p>Subtotal: ${{ number_format($cotizacion->subtotal, 2) }} MXN</p>
+    <p>IVA (16%): ${{ number_format($iva, 2) }} MXN</p>
+    <p class="total">Total: ${{ number_format($totalConIva, 2) }} MXN</p>
 
     @if ($cotizacion->valida_hasta)
     <p>Cotización válida hasta el {{ $cotizacion->valida_hasta->format('d/m/Y') }}.</p>

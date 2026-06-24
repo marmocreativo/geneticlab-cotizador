@@ -198,6 +198,11 @@
         </table>
 
         {{-- Totales --}}
+        @php
+            $subtotalConDescuento = $cotizacion->subtotal - ($cotizacion->subtotal * ($cotizacion->descuento / 100));
+            $iva = $subtotalConDescuento * 0.16;
+            $totalConIva = $subtotalConDescuento + $iva;
+        @endphp
         <div class="border-t border-gray-200 px-6 py-4">
             <div class="flex flex-col items-end gap-1">
                 <div class="flex w-full max-w-xs justify-between text-sm text-gray-600">
@@ -210,9 +215,13 @@
                         <span class="text-red-500">-${{ number_format($cotizacion->subtotal * ($cotizacion->descuento / 100), 2) }}</span>
                     </div>
                 @endif
+                <div class="flex w-full max-w-xs justify-between text-sm text-gray-600">
+                    <span>IVA (16%)</span>
+                    <span>${{ number_format($iva, 2) }}</span>
+                </div>
                 <div class="flex w-full max-w-xs justify-between border-t border-gray-200 pt-2 text-base font-semibold text-gray-900">
                     <span>Total</span>
-                    <span>${{ number_format($cotizacion->total, 2) }}</span>
+                    <span>${{ number_format($totalConIva, 2) }}</span>
                 </div>
             </div>
         </div>

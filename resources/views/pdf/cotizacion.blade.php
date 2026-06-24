@@ -62,12 +62,17 @@
                 </td>
                 <td>{{ $renglon->estudio?->especimen ?? '—' }}</td>
                 <td>{{ $renglon->estudio?->tiempo_respuesta ?? '—' }}</td>
-                <td class="text-right">${{ number_format($renglon->precio_unitario, 2) }} MXN<br><small>Más IVA</small></td>
+                <td class="text-right">${{ number_format($renglon->precio_unitario, 2) }} MXN</td>
             </tr>
             @endforeach
         </tbody>
     </table>
 
+    @php
+        $subtotalConDescuento = $cotizacion->subtotal - ($cotizacion->subtotal * ($cotizacion->descuento / 100));
+        $iva = $subtotalConDescuento * 0.16;
+        $totalConIva = $subtotalConDescuento + $iva;
+    @endphp
     <table class="totales">
         <tr>
             <td>Subtotal</td>
@@ -79,9 +84,13 @@
             <td class="text-right">-${{ number_format($cotizacion->subtotal * ($cotizacion->descuento / 100), 2) }}</td>
         </tr>
         @endif
+        <tr>
+            <td>IVA (16%)</td>
+            <td class="text-right">${{ number_format($iva, 2) }}</td>
+        </tr>
         <tr class="total-row">
             <td>Total</td>
-            <td class="text-right">${{ number_format($cotizacion->total, 2) }} MXN</td>
+            <td class="text-right">${{ number_format($totalConIva, 2) }} MXN</td>
         </tr>
     </table>
 
@@ -89,7 +98,7 @@
     <div class="notas">
         <strong>Condiciones y observaciones:</strong><br>
         {{ $cotizacion->notas }}<br>
-        Al importe final se le agregará IVA.
+        El importe final ya incluye IVA.
     </div>
     @endif
 

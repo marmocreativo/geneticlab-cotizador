@@ -35,10 +35,11 @@ class Paciente extends Model
         if ($this->anonimo) {
             return 'Anónimo — ' . $this->folio;
         }
-
+        /*
         if ($this->iniciales) {
             return $this->iniciales;
         }
+        */
 
         return trim(implode(' ', array_filter([
             $this->nombre,

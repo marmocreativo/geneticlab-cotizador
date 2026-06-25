@@ -227,7 +227,7 @@
 
                                 {{-- Info --}}
                                 <div class="flex-1 min-w-0">
-                                    <p class="text-sm font-semibold text-gray-900 truncate" x-text="cita.paciente"></p>
+                                    <p class="text-sm font-semibold text-gray-900" x-text="cita.paciente"></p>
                                     <p class="text-xs text-gray-400 truncate mt-0.5" x-text="cita.centro"></p>
                                 </div>
 

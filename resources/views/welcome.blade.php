@@ -210,7 +210,7 @@
     <div class="hero-body">
         <img src="{{ asset('images/logo_blanco.png') }}" alt="GeneticLab" style="height: 40px;">
         <h1 class="hero-title">
-            Systema interno de cotizaciones.
+            Sistema interno de cotizaciones.
         </h1>
         <p class="hero-subtitle">
             Más de 5,300 pruebas procesadas desde 2019. Resultados en máximo 72 horas con interpretación clínica directa al médico tratante.

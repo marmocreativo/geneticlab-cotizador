@@ -52,6 +52,17 @@
                         {{ __('Usuarios') }}
                     </flux:sidebar.item>
                 </flux:sidebar.group>
+                <flux:sidebar.group :heading="__('Herramientas')" class="grid">
+                    <flux:sidebar.item icon="user-group" :href="route('fusion.index', 'medicos')" :current="request()->routeIs('fusion.*') && request()->route('tipo') === 'medicos'">
+                        {{ __('Fusionar médicos') }}
+                    </flux:sidebar.item>
+                    <flux:sidebar.item icon="building-office-2" :href="route('fusion.index', 'instituciones')" :current="request()->routeIs('fusion.*') && request()->route('tipo') === 'instituciones'">
+                        {{ __('Fusionar instituciones') }}
+                    </flux:sidebar.item>
+                    <flux:sidebar.item icon="users" :href="route('fusion.index', 'pacientes')" :current="request()->routeIs('fusion.*') && request()->route('tipo') === 'pacientes'">
+                        {{ __('Fusionar pacientes') }}
+                    </flux:sidebar.item>
+                </flux:sidebar.group>
             </flux:sidebar.nav>
 
             <flux:spacer />

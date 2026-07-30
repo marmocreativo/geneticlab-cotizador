@@ -10,6 +10,7 @@ use App\Http\Controllers\AgendaController;
 use App\Http\Controllers\UsuarioController;
 use App\Http\Controllers\AgendaPacienteController;
 use App\Http\Controllers\AgendaCentroController;
+use App\Http\Controllers\FusionController;
 
 // ── Pública ───────────────────────────────────────────
 Route::get('/', fn() => view('welcome'))->name('welcome');
@@ -22,6 +23,13 @@ Route::middleware('auth')->group(function () {
     // Dashboard
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::redirect('/home', '/dashboard')->name('home');
+
+    // Fusión de duplicados
+    Route::prefix('fusion')->name('fusion.')->group(function () {
+        Route::get('{tipo}', [FusionController::class, 'index'])->name('index');
+        Route::post('{tipo}/revisar', [FusionController::class, 'revisar'])->name('revisar');
+        Route::post('{tipo}/confirmar', [FusionController::class, 'confirmar'])->name('confirmar');
+    });
 
     // Cotizaciones
     Route::get('cotizaciones/{cotizacion}/pdf', [CotizacionController::class, 'descargarPdf'])

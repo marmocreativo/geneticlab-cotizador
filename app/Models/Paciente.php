@@ -55,10 +55,26 @@ class Paciente extends Model
     {
         static::creating(function (Paciente $paciente) {
             if (empty($paciente->folio)) {
-                $year    = now()->year;
-                $ultimo  = static::whereYear('created_at', $year)->withTrashed()->count() + 1;
-                $paciente->folio = sprintf('PAC-%d-%05d', $year, $ultimo);
+                $paciente->folio = static::generarFolio();
             }
+        });
+    }
+
+    protected static function generarFolio(): string
+    {
+        return \Illuminate\Support\Facades\DB::transaction(function () {
+            $year = now()->year;
+
+            // Bloquea las filas del año en curso para evitar folios duplicados
+            // por inserciones concurrentes (misma lógica que Cotizacion::generarFolio)
+            $ultimo = static::withTrashed()
+                ->whereYear('created_at', $year)
+                ->lockForUpdate()
+                ->max(\Illuminate\Support\Facades\DB::raw("CAST(SUBSTRING_INDEX(folio, '-', -1) AS UNSIGNED)"));
+
+            $consecutivo = ($ultimo ?? 0) + 1;
+
+            return sprintf('PAC-%d-%05d', $year, $consecutivo);
         });
     }
 }

@@ -59,6 +59,23 @@
     <p>Cotización válida hasta el {{ $cotizacion->valida_hasta->format('d/m/Y') }}.</p>
     @endif
 
+    @if(!empty($incluirDatosBancarios))
+    <table style="width:100%; border-collapse: collapse; margin-top: 20px; border: 1px solid #e5e7eb;">
+        <tr>
+            <td style="background:#002745; color:#fff; padding:10px 12px; font-weight:bold; font-size:13px; text-transform:uppercase;">
+                Datos bancarios
+            </td>
+        </tr>
+    </table>
+    <table style="width:100%; border-collapse: collapse; margin-bottom: 16px;">
+        <tr><td style="padding:6px 12px; color:#002745; font-weight:bold; width:40%;">Titular</td><td style="padding:6px 12px; font-weight:bold;">GENETIC LAB CONSULTANTS</td></tr>
+        <tr><td style="padding:6px 12px; color:#002745; font-weight:bold;">Banco</td><td style="padding:6px 12px; font-weight:bold;">BBVA</td></tr>
+        <tr><td style="padding:6px 12px; color:#002745; font-weight:bold;">Cuenta CLABE</td><td style="padding:6px 12px; font-weight:bold;">012180001115473057</td></tr>
+        <tr><td style="padding:6px 12px; color:#002745; font-weight:bold;">Núm. de cuenta</td><td style="padding:6px 12px; font-weight:bold;">0111547305</td></tr>
+    </table>
+    <p style="font-size:11px; color:#666;">Favor de compartir su comprobante de pago una vez realizada la transferencia.</p>
+    @endif
+
     <div class="footer">
         Agradecemos su interés. Si tiene alguna pregunta, no dude en contactarnos.<br>
         <strong>GeneticLab</strong>

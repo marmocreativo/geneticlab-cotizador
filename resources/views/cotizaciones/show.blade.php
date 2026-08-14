@@ -27,7 +27,12 @@
         </div>
 
         {{-- Acciones de estado --}}
-        <div class="flex items-center gap-2 flex-wrap">
+        <div class="flex items-center gap-2 flex-wrap" x-data="{ datosBancarios: false }">
+            <label class="inline-flex items-center gap-2 rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-600 cursor-pointer select-none">
+                <input type="checkbox" x-model="datosBancarios" class="rounded border-gray-300 text-[#002745] focus:ring-[#002745]">
+                Agregar datos bancarios
+            </label>
+
             @if($cotizacion->estado === 'borrador')
                 <form method="POST" action="{{ route('cotizaciones.estado', $cotizacion) }}">
                     @csrf
@@ -71,7 +76,7 @@
             </a>
 
             {{-- Descargar PDF --}}
-            <a href="{{ route('cotizaciones.pdf', $cotizacion) }}"
+            <a :href="datosBancarios ? '{{ route('cotizaciones.pdf', $cotizacion) }}?datos_bancarios=1' : '{{ route('cotizaciones.pdf', $cotizacion) }}'"
             target="_blank"
             class="inline-flex items-center gap-2 rounded-lg border border-gray-200 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors">
                 <svg xmlns="http://www.w3.org/2000/svg" class="size-4" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
@@ -82,21 +87,37 @@
 
             {{-- WhatsApp --}}
             @php
-                $urlPdf    = route('cotizaciones.pdf.ver', $cotizacion);
-                $telefono  = preg_replace('/\D/', '', $cotizacion->medico?->telefono ?? '');
-                $mensaje   = urlencode(
-                    "Estimado(a) {$cotizacion->medico?->nombre_completo},\n\n" .
-                    "Le compartimos la cotización *{$cotizacion->folio}* por un total de " .
-                    "*$" . number_format($cotizacion->total, 2) . " MXN*.\n\n" .
-                    "Puede consultarla en el siguiente enlace:\n{$urlPdf}\n\n" .
-                    "Quedamos a sus órdenes."
-                );
-                $waUrl = $telefono
-                    ? "https://wa.me/{$telefono}?text={$mensaje}"
-                    : "https://wa.me/?text={$mensaje}";
+                $telefono = preg_replace('/\D/', '', $cotizacion->medico?->telefono ?? '');
+
+                $construirMensaje = function (bool $conBanco) use ($cotizacion) {
+                    $urlPdf = route('cotizaciones.pdf.ver', $cotizacion) . ($conBanco ? '?datos_bancarios=1' : '');
+
+                    $texto = "Estimado(a) {$cotizacion->medico?->nombre_completo},\n\n" .
+                        "Le compartimos la cotización *{$cotizacion->folio}* por un total de " .
+                        "*$" . number_format($cotizacion->total, 2) . " MXN*.\n\n" .
+                        "Puede consultarla en el siguiente enlace:\n{$urlPdf}\n\n";
+
+                    if ($conBanco) {
+                        $texto .= "*Datos bancarios*\n" .
+                            "Titular: GENETIC LAB CONSULTANTS\n" .
+                            "Banco: BBVA\n" .
+                            "Cuenta CLABE: 012180001115473057\n" .
+                            "Núm. de cuenta: 0111547305\n\n";
+                    }
+
+                    $texto .= "Quedamos a sus órdenes.";
+
+                    return urlencode($texto);
+                };
+
+                $mensajeSinBanco = $construirMensaje(false);
+                $mensajeConBanco = $construirMensaje(true);
+
+                $waUrlSinBanco = $telefono ? "https://wa.me/{$telefono}?text={$mensajeSinBanco}" : "https://wa.me/?text={$mensajeSinBanco}";
+                $waUrlConBanco = $telefono ? "https://wa.me/{$telefono}?text={$mensajeConBanco}" : "https://wa.me/?text={$mensajeConBanco}";
             @endphp
 
-            <a href="{{ $waUrl }}"
+            <a :href="datosBancarios ? '{{ $waUrlConBanco }}' : '{{ $waUrlSinBanco }}'"
             target="_blank"
             class="inline-flex items-center gap-2 rounded-lg border border-green-200 bg-green-50 px-4 py-2 text-sm font-medium text-green-700 hover:bg-green-100 transition-colors">
                 <svg xmlns="http://www.w3.org/2000/svg" class="size-4" fill="currentColor" viewBox="0 0 24 24">
@@ -129,6 +150,7 @@
                                placeholder="correo@ejemplo.com"
                                required
                                class="mb-2 w-full rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-900 placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500" />
+                        <input type="hidden" name="datos_bancarios" :value="datosBancarios ? 1 : 0">
                         <button type="submit"
                                 class="w-full rounded-lg px-4 py-2 text-sm font-medium text-white hover:opacity-90 transition-colors"
                                 style="background-color:#002745;">

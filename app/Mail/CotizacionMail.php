@@ -15,7 +15,10 @@ class CotizacionMail extends Mailable
 {
     use Queueable, SerializesModels;
 
-    public function __construct(public Cotizacion $cotizacion) {}
+    public function __construct(
+        public Cotizacion $cotizacion,
+        public bool $incluirDatosBancarios = false
+    ) {}
 
     public function envelope(): Envelope
     {
@@ -28,12 +31,16 @@ class CotizacionMail extends Mailable
     {
         return new Content(
             view: 'emails.cotizacion',
+            with: ['incluirDatosBancarios' => $this->incluirDatosBancarios],
         );
     }
 
     public function attachments(): array
     {
-        $pdf = Pdf::loadView('pdf.cotizacion', ['cotizacion' => $this->cotizacion]);
+        $pdf = Pdf::loadView('pdf.cotizacion', [
+            'cotizacion' => $this->cotizacion,
+            'incluirDatosBancarios' => $this->incluirDatosBancarios,
+        ]);
 
         return [
             Attachment::fromData(

@@ -21,6 +21,13 @@
         .totales .total-row { font-weight: bold; font-size: 13px; border-top: 1px solid #002745; }
         .notas { margin-top: 20px; padding: 10px; background: #f9fafb; border-left: 3px solid #002745; font-size: 11px; }
         .footer { margin-top: 40px; font-size: 11px; color: #888; border-top: 1px solid #e5e7eb; padding-top: 12px; }
+        .datos-bancarios { margin-top: 20px; border: 1px solid #e5e7eb; }
+        .datos-bancarios-header { background-color: #002745; color: #fff; padding: 10px 14px; font-weight: bold; font-size: 12px; text-transform: uppercase; }
+        .datos-bancarios-tabla { width: 100%; border-collapse: collapse; }
+        .datos-bancarios-tabla td { padding: 6px 14px; border: none; font-size: 12px; }
+        .datos-bancarios-tabla .label { color: #002745; font-weight: bold; width: 40%; }
+        .datos-bancarios-tabla .valor { font-weight: bold; color: #333; }
+        .datos-bancarios-nota { padding: 8px 14px 12px; font-size: 10px; color: #666; margin: 0; }
     </style>
 </head>
 <body>
@@ -106,6 +113,19 @@
     <p style="font-size:11px; color:#666; margin-top:12px;">
         Cotización válida hasta el {{ $cotizacion->valida_hasta->format('d/m/Y') }}.
     </p>
+    @endif
+
+    @if(!empty($incluirDatosBancarios))
+    <div class="datos-bancarios">
+        <div class="datos-bancarios-header">Datos bancarios</div>
+        <table class="datos-bancarios-tabla">
+            <tr><td class="label">TITULAR</td><td class="valor">GENETIC LAB CONSULTANTS</td></tr>
+            <tr><td class="label">BANCO</td><td class="valor">BBVA</td></tr>
+            <tr><td class="label">CUENTA CLABE</td><td class="valor">012180001115473057</td></tr>
+            <tr><td class="label">NÚM. DE CUENTA</td><td class="valor">0111547305</td></tr>
+        </table>
+        <p class="datos-bancarios-nota">Favor de compartir su comprobante de pago una vez realizada la transferencia.</p>
+    </div>
     @endif
 
     <div class="footer">

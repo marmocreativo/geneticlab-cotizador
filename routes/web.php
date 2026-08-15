@@ -75,6 +75,8 @@ Route::middleware('auth')->group(function () {
         Route::patch('/citas/{cita}/estado', [AgendaController::class, 'actualizarEstado'])->name('citas.estado');
         Route::delete('/citas/{cita}',       [AgendaController::class, 'destroy'])->name('citas.destroy');
 
+        Route::get('/exportar', [AgendaController::class, 'exportarExcel'])->name('exportar');
+
         Route::resource('pacientes', AgendaPacienteController::class);
         Route::resource('centros',   AgendaCentroController::class)
             ->parameters(['centros' => 'centro']);

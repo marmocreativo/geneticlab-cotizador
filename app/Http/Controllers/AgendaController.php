@@ -52,6 +52,53 @@ class AgendaController extends Controller
         ));
     }
 
+    public function exportarExcel(Request $request)
+    {
+        $validated = $request->validate([
+            'desde'  => 'required|date',
+            'hasta'  => 'required|date|after_or_equal:desde',
+            'centro' => 'nullable|exists:centros_agenda,id',
+        ]);
+
+        $citas = Cita::with(['paciente', 'centro'])
+            ->whereBetween('fecha', [$validated['desde'], $validated['hasta']])
+            ->when($validated['centro'] ?? null, fn($q, $v) => $q->where('centro_id', $v))
+            ->orderBy('fecha')
+            ->orderBy('hora')
+            ->get();
+
+        $nombreArchivo = 'agenda_' . $validated['desde'] . '_a_' . $validated['hasta'] . '.csv';
+
+        $callback = function () use ($citas) {
+            $handle = fopen('php://output', 'w');
+            fwrite($handle, "\xEF\xBB\xBF"); // BOM para que Excel reconozca UTF-8
+
+            fputcsv($handle, [
+                'Folio paciente', 'Paciente', 'Estatus',
+                'Laboratorio auxiliar', 'Fecha', 'Hora', 'Notas',
+            ]);
+
+            foreach ($citas as $cita) {
+                fputcsv($handle, [
+                    $cita->paciente->folio,
+                    $cita->paciente->nombre_display,
+                    ucfirst($cita->estado),
+                    $cita->centro->nombre,
+                    $cita->fecha->format('d/m/Y'),
+                    $cita->hora,
+                    $cita->notas,
+                ]);
+            }
+
+            fclose($handle);
+        };
+
+        return response()->stream($callback, 200, [
+            'Content-Type'        => 'text/csv; charset=UTF-8',
+            'Content-Disposition' => "attachment; filename=\"{$nombreArchivo}\"",
+        ]);
+    }
+
     public function create(Request $request)
     {
         $fecha    = $request->get('fecha', now()->toDateString());

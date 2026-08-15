@@ -81,6 +81,65 @@
                 </a>
             </div>
 
+            {{-- Exportar agenda a Excel/CSV --}}
+            <div x-data="{ exportarAbierto: false }" class="inline-block">
+                <button type="button" @click="exportarAbierto = true"
+                        class="inline-flex items-center gap-2 rounded-lg border border-gray-200 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="size-4" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" />
+                    </svg>
+                    Exportar
+                </button>
+
+                <div x-show="exportarAbierto"
+                     x-transition
+                     class="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
+                     style="display:none"
+                     @click.self="exportarAbierto = false">
+                    <div class="w-full max-w-sm rounded-xl bg-white shadow-xl overflow-hidden" @click.outside="exportarAbierto = false">
+
+                        <div class="flex items-center justify-between border-b border-gray-200 px-6 py-4">
+                            <h2 class="text-base font-semibold text-gray-900">Exportar agenda</h2>
+                            <button type="button" @click="exportarAbierto = false" class="rounded-lg p-1.5 text-gray-400 hover:bg-gray-100 hover:text-gray-600">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="size-5" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+                                </svg>
+                            </button>
+                        </div>
+
+                        <form method="GET" action="{{ route('agenda.exportar') }}" target="_blank" class="p-6 space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Desde</label>
+                                <input type="date" name="desde" required
+                                       value="{{ $fechaCarbon->copy()->startOfMonth()->toDateString() }}"
+                                       class="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Hasta</label>
+                                <input type="date" name="hasta" required
+                                       value="{{ $fechaCarbon->copy()->endOfMonth()->toDateString() }}"
+                                       class="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Laboratorio auxiliar (opcional)</label>
+                                <select name="centro"
+                                        class="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-700 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500">
+                                    <option value="">Todos los centros</option>
+                                    @foreach($centros as $c)
+                                        <option value="{{ $c->id }}">{{ $c->nombre }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <button type="submit" @click="exportarAbierto = false"
+                                    class="w-full rounded-lg px-4 py-2 text-sm font-medium text-white hover:opacity-90 transition-colors"
+                                    style="background-color:#002745;">
+                                Descargar CSV
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
             <a href="{{ route('agenda.citas.create', ['fecha' => $fecha]) }}"
                class="inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium text-white hover:opacity-90 transition-colors"
                style="background-color:#002745;">

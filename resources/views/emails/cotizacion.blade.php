@@ -68,10 +68,10 @@
         </tr>
     </table>
     <table style="width:100%; border-collapse: collapse; margin-bottom: 16px;">
-        <tr><td style="padding:6px 12px; color:#002745; font-weight:bold; width:40%;">Titular</td><td style="padding:6px 12px; font-weight:bold;">GENETIC LAB CONSULTANTS</td></tr>
-        <tr><td style="padding:6px 12px; color:#002745; font-weight:bold;">Banco</td><td style="padding:6px 12px; font-weight:bold;">BBVA</td></tr>
-        <tr><td style="padding:6px 12px; color:#002745; font-weight:bold;">Cuenta CLABE</td><td style="padding:6px 12px; font-weight:bold;">012180001115473057</td></tr>
-        <tr><td style="padding:6px 12px; color:#002745; font-weight:bold;">Núm. de cuenta</td><td style="padding:6px 12px; font-weight:bold;">0111547305</td></tr>
+        <tr><td style="padding:6px 12px; color:#002745; font-weight:bold; width:40%;">Titular</td><td style="padding:6px 12px; font-weight:bold;">GENETIC LAB CONSULTANTS SA DE CV</td></tr>
+        <tr><td style="padding:6px 12px; color:#002745; font-weight:bold;">Banco</td><td style="padding:6px 12px; font-weight:bold;">BanBajío</td></tr>
+        <tr><td style="padding:6px 12px; color:#002745; font-weight:bold;">Cuenta CLABE</td><td style="padding:6px 12px; font-weight:bold;">030180900048083765</td></tr>
+        <tr><td style="padding:6px 12px; color:#002745; font-weight:bold;">Núm. de cuenta</td><td style="padding:6px 12px; font-weight:bold;">0508832140201</td></tr>
     </table>
     <p style="font-size:11px; color:#666;">Favor de compartir su comprobante de pago una vez realizada la transferencia.</p>
     @endif

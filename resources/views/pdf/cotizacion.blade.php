@@ -119,10 +119,10 @@
     <div class="datos-bancarios">
         <div class="datos-bancarios-header">Datos bancarios</div>
         <table class="datos-bancarios-tabla">
-            <tr><td class="label">TITULAR</td><td class="valor">GENETIC LAB CONSULTANTS</td></tr>
-            <tr><td class="label">BANCO</td><td class="valor">BBVA</td></tr>
-            <tr><td class="label">CUENTA CLABE</td><td class="valor">012180001115473057</td></tr>
-            <tr><td class="label">NÚM. DE CUENTA</td><td class="valor">0111547305</td></tr>
+            <tr><td class="label">TITULAR</td><td class="valor">GENETIC LAB CONSULTANTS SA DE CV</td></tr>
+            <tr><td class="label">BANCO</td><td class="valor">BanBajío</td></tr>
+            <tr><td class="label">CUENTA CLABE</td><td class="valor">030180900048083765</td></tr>
+            <tr><td class="label">NÚM. DE CUENTA</td><td class="valor">0508832140201</td></tr>
         </table>
         <p class="datos-bancarios-nota">Favor de compartir su comprobante de pago una vez realizada la transferencia.</p>
     </div>

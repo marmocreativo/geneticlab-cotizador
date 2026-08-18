@@ -99,10 +99,10 @@
 
                     if ($conBanco) {
                         $texto .= "*Datos bancarios*\n" .
-                            "Titular: GENETIC LAB CONSULTANTS\n" .
-                            "Banco: BBVA\n" .
-                            "Cuenta CLABE: 012180001115473057\n" .
-                            "Núm. de cuenta: 0111547305\n\n";
+                            "Titular: GENETIC LAB CONSULTANTS SA DE CV\n" .
+                            "Banco: BanBajío\n" .
+                            "Cuenta CLABE: 030180900048083765\n" .
+                            "Núm. de cuenta: 0508832140201\n\n";
                     }
 
                     $texto .= "Quedamos a sus órdenes.";

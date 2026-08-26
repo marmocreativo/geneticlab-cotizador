@@ -12,9 +12,9 @@
         .intro { margin-bottom: 20px; color: #444; }
         table { width: 100%; border-collapse: collapse; margin-bottom: 16px; }
         thead tr { background-color: #002745; color: #fff; }
-        thead th { padding: 8px 10px; text-align: left; font-size: 11px; text-transform: uppercase; }
+        thead th { padding: 6px 8px; text-align: left; font-size: 9px; text-transform: uppercase; }
         tbody tr { border-bottom: 1px solid #e5e7eb; }
-        tbody td { padding: 8px 10px; }
+        tbody td { padding: 6px 8px; font-size: 10px; }
         .text-right { text-align: right; }
         .totales { width: 260px; margin-left: auto; margin-top: 8px; }
         .totales td { padding: 4px 8px; font-size: 12px; }
@@ -132,7 +132,22 @@
         Agradecemos su interés en nuestra propuesta. Si tiene alguna pregunta o necesita más información,
         no dude en ponerse en contacto con nosotros.<br><br>
         Cordialmente<br>
-        <strong>GeneticLab</strong>
+        @if ($usuario ?? null)
+            @if ($usuario->imagen_firma)
+                <div style="margin-top: 8px;">
+                    <img src="data:image/png;base64,{{ base64_encode(\Illuminate\Support\Facades\Storage::disk('public')->get($usuario->imagen_firma)) }}"
+                         style="height: 50px; width: auto;" />
+                </div>
+            @endif
+            <div style="margin-top: 4px;">
+                <strong>{{ $usuario->nombre_completo }}</strong>
+                @if ($usuario->puesto)
+                    <br>{{ $usuario->puesto }}
+                @endif
+            </div>
+        @else
+            <strong>GeneticLab</strong>
+        @endif
     </div>
 
 </body>

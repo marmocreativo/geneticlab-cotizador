@@ -13,7 +13,7 @@
         </div>
     </div>
 
-    <form method="POST" action="{{ route('usuarios.update', $usuario) }}" class="max-w-lg flex flex-col gap-6">
+    <form method="POST" action="{{ route('usuarios.update', $usuario) }}" enctype="multipart/form-data" class="max-w-lg flex flex-col gap-6">
         @csrf
         @method('PUT')
 
@@ -39,6 +39,57 @@
                 @error('email')
                     <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
                 @enderror
+            </div>
+
+                        <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="mb-1 block text-sm font-medium text-gray-700">Prefijo</label>
+                    <select name="prefijo"
+                            class="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500">
+                        <option value="">—</option>
+                        @foreach (['Dr.', 'Dra.', 'Lic.', 'Ing.', 'Mtro.', 'Mtra.'] as $opcion)
+                            <option value="{{ $opcion }}" @selected(old('prefijo', $usuario->prefijo) === $opcion)>{{ $opcion }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div>
+                    <label class="mb-1 block text-sm font-medium text-gray-700">Apellidos</label>
+                    <input type="text" name="apellidos" value="{{ old('apellidos', $usuario->apellidos) }}"
+                           class="w-full rounded-lg border px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 {{ $errors->has('apellidos') ? 'border-red-400' : 'border-gray-200' }}" />
+                    @error('apellidos')
+                        <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
+                    @enderror
+                </div>
+            </div>
+
+            <div>
+                <label class="mb-1 block text-sm font-medium text-gray-700">Puesto</label>
+                <input type="text" name="puesto" value="{{ old('puesto', $usuario->puesto) }}"
+                       class="w-full rounded-lg border px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 {{ $errors->has('puesto') ? 'border-red-400' : 'border-gray-200' }}" />
+                @error('puesto')
+                    <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
+                @enderror
+            </div>
+
+            <div x-data="{ preview: null }">
+                <label class="mb-1 block text-sm font-medium text-gray-700">Imagen de firma</label>
+
+                @if ($usuario->imagen_firma_url)
+                    <div class="mb-2">
+                        <img src="{{ $usuario->imagen_firma_url }}" class="h-20 rounded-lg border border-gray-200 bg-gray-50 object-contain p-2" />
+                        <p class="mt-1 text-xs text-gray-400">Firma actual. Sube una nueva imagen para reemplazarla.</p>
+                    </div>
+                @endif
+
+                <input type="file" name="imagen_firma" accept="image/*"
+                       @change="preview = $event.target.files.length ? URL.createObjectURL($event.target.files[0]) : null"
+                       class="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-900 file:mr-3 file:rounded-md file:border-0 file:bg-gray-100 file:px-3 file:py-1.5 file:text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500" />
+                @error('imagen_firma')
+                    <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
+                @enderror
+                <div x-show="preview" class="mt-3">
+                    <img :src="preview" class="h-20 rounded-lg border border-gray-200 bg-gray-50 object-contain p-2" />
+                </div>
             </div>
 
             <div class="border-t border-gray-100 pt-4">

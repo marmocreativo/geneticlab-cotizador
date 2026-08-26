@@ -17,7 +17,8 @@ class CotizacionMail extends Mailable
 
     public function __construct(
         public Cotizacion $cotizacion,
-        public bool $incluirDatosBancarios = false
+        public bool $incluirDatosBancarios = false,
+        public ?\App\Models\User $usuario = null
     ) {}
 
     public function envelope(): Envelope
@@ -31,7 +32,10 @@ class CotizacionMail extends Mailable
     {
         return new Content(
             view: 'emails.cotizacion',
-            with: ['incluirDatosBancarios' => $this->incluirDatosBancarios],
+            with: [
+                'incluirDatosBancarios' => $this->incluirDatosBancarios,
+                'usuario' => $this->usuario,
+            ],
         );
     }
 
@@ -40,6 +44,7 @@ class CotizacionMail extends Mailable
         $pdf = Pdf::loadView('pdf.cotizacion', [
             'cotizacion' => $this->cotizacion,
             'incluirDatosBancarios' => $this->incluirDatosBancarios,
+            'usuario' => $this->usuario,
         ]);
 
         return [

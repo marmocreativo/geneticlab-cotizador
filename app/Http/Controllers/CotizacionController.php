@@ -231,10 +231,11 @@ class CotizacionController extends Controller
         $cotizacion->load(['medico.hospital', 'hospital', 'estudios.estudio']);
 
         $incluirDatosBancarios = $request->boolean('datos_bancarios');
+        $usuario = auth()->user();
 
         \Illuminate\Support\Facades\Mail::to($request->email)
             ->cc('agendatucita@geneticlab.mx')
-            ->send(new \App\Mail\CotizacionMail($cotizacion, $incluirDatosBancarios));
+            ->send(new \App\Mail\CotizacionMail($cotizacion, $incluirDatosBancarios, $usuario));
 
         $cotizacion->update(['estado' => 'enviada']);
 
@@ -246,8 +247,9 @@ class CotizacionController extends Controller
         $cotizacion->load(['medico.hospital', 'hospital', 'estudios.estudio']);
 
         $incluirDatosBancarios = $request->boolean('datos_bancarios');
+        $usuario = auth()->user();
 
-        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('pdf.cotizacion', compact('cotizacion', 'incluirDatosBancarios'));
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('pdf.cotizacion', compact('cotizacion', 'incluirDatosBancarios', 'usuario'));
 
         return $pdf->download($cotizacion->folio . '.pdf');
     }
@@ -257,8 +259,9 @@ class CotizacionController extends Controller
         $cotizacion->load(['medico.hospital', 'hospital', 'estudios.estudio']);
 
         $incluirDatosBancarios = $request->boolean('datos_bancarios');
+        $usuario = auth()->user();
 
-        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('pdf.cotizacion', compact('cotizacion', 'incluirDatosBancarios'));
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('pdf.cotizacion', compact('cotizacion', 'incluirDatosBancarios', 'usuario'));
 
         return $pdf->stream($cotizacion->folio . '.pdf');
     }

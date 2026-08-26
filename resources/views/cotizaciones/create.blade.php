@@ -14,7 +14,7 @@
         </div>
     </div>
 
-    <div x-data="wizardCotizacion({{ session('paso_error', 1) }})" class="max-w-2xl">
+    <div x-data="wizardCotizacion({{ session('paso_error', 1) }})" class="max-w-5xl">
 
         {{-- Indicador de pasos --}}
         <div class="mb-8 flex items-center">
@@ -285,114 +285,129 @@
                 <div class="rounded-xl border border-gray-200 bg-white p-6">
                     <h2 class="mb-4 text-sm font-semibold uppercase tracking-wide text-gray-700">Agrega los estudios</h2>
 
-                    <input type="text"
-                           x-model="busquedaEstudio"
-                           placeholder="Buscar estudio por nombre o área..."
-                           class="mb-3 w-full rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-900 placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500" />
+                    <div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
 
-                    {{-- Resultados búsqueda --}}
-                    <template x-if="true">
-                        <div class="mb-4 flex flex-col gap-1">
-                            <template x-for="e in estudiosFiltrados()" :key="e.id">
-                                <button type="button"
-                                        @click="agregarEstudio(e)"
-                                        class="flex items-center justify-between rounded-lg border border-gray-200 px-4 py-2.5 text-left hover:border-gray-400 hover:bg-gray-50 transition-colors">
-                                    <div>
-                                        <span class="font-medium text-gray-900" x-text="e.nombre"></span>
-                                        <span class="ml-2 text-xs text-gray-400" x-text="e.area_terapeutica"></span>
-                                    </div>
-                                    <span class="text-sm font-medium" style="color:#002745;"
-                                          x-text="'$' + Number(e.precio_unitario).toLocaleString('es-MX', {minimumFractionDigits:2})"></span>
-                                </button>
-                            </template>
-                            <p x-show="estudiosFiltrados().length === 0"
-                               class="text-sm text-gray-400 px-1">No se encontraron estudios.</p>
-                        </div>
-                    </template>
+                        {{-- ── Columna izquierda (1/3) — Buscador de estudios ── --}}
+                        <div class="lg:col-span-1">
+                            <input type="text"
+                                   x-model="busquedaEstudio"
+                                   placeholder="Buscar estudio por nombre o área..."
+                                   class="mb-3 w-full rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-900 placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500" />
 
-                    {{-- Estudios seleccionados --}}
-                    <template x-if="estudios.length > 0">
-                        <div class="mb-4 flex flex-col gap-2">
-                            <template x-for="(item, i) in estudios" :key="item.id">
-                                <div class="flex items-center gap-3 rounded-lg border border-gray-200 p-3">
-                                    <div class="flex-1">
-                                        <p class="text-sm font-medium text-gray-900" x-text="item.nombre"></p>
-                                        <p class="text-xs text-gray-400"
-                                           x-text="'$' + Number(item.precio_unitario).toLocaleString('es-MX', {minimumFractionDigits:2}) + ' c/u'"></p>
-                                    </div>
-                                    <input type="number"
-                                           min="1"
-                                           x-model.number="item.cantidad"
-                                           @change="item.cantidad = Math.max(1, item.cantidad)"
-                                           class="w-20 rounded-lg border border-gray-200 px-2 py-1 text-center text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500" />
-                                    <span class="w-28 text-right text-sm font-medium text-gray-900"
-                                          x-text="'$' + (item.precio_unitario * item.cantidad).toLocaleString('es-MX', {minimumFractionDigits:2})"></span>
-                                    <button type="button" @click="quitarEstudio(i)"
-                                            class="rounded-lg p-1 text-gray-400 hover:bg-red-50 hover:text-red-500 transition-colors">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="size-4" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
-                                        </svg>
+                            <div class="flex flex-col gap-1 max-h-[520px] overflow-y-auto pr-1">
+                                <template x-for="e in estudiosFiltrados()" :key="e.id">
+                                    <button type="button"
+                                            @click="agregarEstudio(e)"
+                                            class="flex flex-col items-start gap-0.5 rounded-lg border border-gray-200 px-3 py-2.5 text-left hover:border-gray-400 hover:bg-gray-50 transition-colors">
+                                        <span class="text-sm font-medium text-gray-900" x-text="e.nombre"></span>
+                                        <div class="flex w-full items-center justify-between">
+                                            <span class="text-xs text-gray-400" x-text="e.area_terapeutica"></span>
+                                            <span class="text-xs font-medium" style="color:#002745;"
+                                                  x-text="'$' + Number(e.precio_unitario).toLocaleString('es-MX', {minimumFractionDigits:2})"></span>
+                                        </div>
                                     </button>
-
-                                    {{-- Campos ocultos para el POST --}}
-                                    <input type="hidden" :name="`estudios[${i}][id]`" :value="item.id" />
-                                    <input type="hidden" :name="`estudios[${i}][cantidad]`" :value="item.cantidad" />
-                                    <input type="hidden" :name="`estudios[${i}][precio]`" :value="item.precio_unitario" />
-                                </div>
-                            </template>
-                        </div>
-                    </template>
-
-                    @error('estudios')
-                        <p class="mb-4 text-sm text-red-500">{{ $message }}</p>
-                    @enderror
-
-                    {{-- Totales --}}
-                    <template x-if="estudios.length > 0">
-                        <div class="mb-4 flex flex-col items-end gap-1 border-t border-gray-200 pt-4">
-                            <div class="flex w-full max-w-xs justify-between text-sm text-gray-600">
-                                <span>Subtotal</span>
-                                <span x-text="'$' + subtotal().toLocaleString('es-MX', {minimumFractionDigits:2})"></span>
-                            </div>
-                            <template x-if="Number(descuento) > 0">
-                                <div class="flex w-full max-w-xs justify-between text-sm">
-                                    <span class="text-gray-600" x-text="`Descuento (${descuento}%)`"></span>
-                                    <span class="text-red-500"
-                                          x-text="'-$' + descuentoImporte().toLocaleString('es-MX', {minimumFractionDigits:2})"></span>
-                                </div>
-                            </template>
-                            <div class="flex w-full max-w-xs justify-between border-t border-gray-200 pt-2 text-base font-semibold text-gray-900">
-                                <span>Total</span>
-                                <span x-text="'$' + total().toLocaleString('es-MX', {minimumFractionDigits:2})"></span>
+                                </template>
+                                <p x-show="estudiosFiltrados().length === 0"
+                                   class="text-sm text-gray-400 px-1">No se encontraron estudios.</p>
                             </div>
                         </div>
-                    </template>
 
-                    {{-- Opciones adicionales --}}
-                    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 border-t border-gray-200 pt-4">
-                        <div>
-                            <label class="mb-1 block text-sm font-medium text-gray-700">Descuento (%)</label>
-                            <input type="number"
-                                   name="descuento"
-                                   x-model="descuento"
-                                   min="0" max="100" step="0.5"
-                                   placeholder="0"
-                                   value="{{ old('descuento', 0) }}"
-                                   class="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-900 placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500" />
+                        {{-- ── Columna derecha (2/3) — Cotización armada ── --}}
+                        <div class="lg:col-span-2">
+
+                            <template x-if="estudios.length === 0">
+                                <div class="flex h-40 flex-col items-center justify-center rounded-lg border border-dashed border-gray-200 text-center">
+                                    <p class="text-sm text-gray-400">Aún no has agregado estudios.</p>
+                                    <p class="text-xs text-gray-400">Selecciónalos de la lista de la izquierda.</p>
+                                </div>
+                            </template>
+
+                            {{-- Estudios seleccionados --}}
+                            <template x-if="estudios.length > 0">
+                                <div class="mb-4 flex flex-col gap-2">
+                                    <template x-for="(item, i) in estudios" :key="item.id">
+                                        <div class="flex items-center gap-3 rounded-lg border border-gray-200 p-3">
+                                            <div class="flex-1">
+                                                <p class="text-sm font-medium text-gray-900" x-text="item.nombre"></p>
+                                                <p class="text-xs text-gray-400"
+                                                   x-text="'$' + Number(item.precio_unitario).toLocaleString('es-MX', {minimumFractionDigits:2}) + ' c/u'"></p>
+                                            </div>
+                                            <input type="number"
+                                                   min="1"
+                                                   x-model.number="item.cantidad"
+                                                   @change="item.cantidad = Math.max(1, item.cantidad)"
+                                                   class="w-20 rounded-lg border border-gray-200 px-2 py-1 text-center text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500" />
+                                            <span class="w-28 text-right text-sm font-medium text-gray-900"
+                                                  x-text="'$' + (item.precio_unitario * item.cantidad).toLocaleString('es-MX', {minimumFractionDigits:2})"></span>
+                                            <button type="button" @click="quitarEstudio(i)"
+                                                    class="rounded-lg p-1 text-gray-400 hover:bg-red-50 hover:text-red-500 transition-colors">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="size-4" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+                                                </svg>
+                                            </button>
+
+                                            {{-- Campos ocultos para el POST --}}
+                                            <input type="hidden" :name="`estudios[${i}][id]`" :value="item.id" />
+                                            <input type="hidden" :name="`estudios[${i}][cantidad]`" :value="item.cantidad" />
+                                            <input type="hidden" :name="`estudios[${i}][precio]`" :value="item.precio_unitario" />
+                                        </div>
+                                    </template>
+                                </div>
+                            </template>
+
+                            @error('estudios')
+                                <p class="mb-4 text-sm text-red-500">{{ $message }}</p>
+                            @enderror
+
+                            {{-- Totales --}}
+                            <template x-if="estudios.length > 0">
+                                <div class="mb-4 flex flex-col items-end gap-1 border-t border-gray-200 pt-4">
+                                    <div class="flex w-full max-w-xs justify-between text-sm text-gray-600">
+                                        <span>Subtotal</span>
+                                        <span x-text="'$' + subtotal().toLocaleString('es-MX', {minimumFractionDigits:2})"></span>
+                                    </div>
+                                    <template x-if="Number(descuento) > 0">
+                                        <div class="flex w-full max-w-xs justify-between text-sm">
+                                            <span class="text-gray-600" x-text="`Descuento (${descuento}%)`"></span>
+                                            <span class="text-red-500"
+                                                  x-text="'-$' + descuentoImporte().toLocaleString('es-MX', {minimumFractionDigits:2})"></span>
+                                        </div>
+                                    </template>
+                                    <div class="flex w-full max-w-xs justify-between border-t border-gray-200 pt-2 text-base font-semibold text-gray-900">
+                                        <span>Total</span>
+                                        <span x-text="'$' + total().toLocaleString('es-MX', {minimumFractionDigits:2})"></span>
+                                    </div>
+                                </div>
+                            </template>
+
+                            {{-- Opciones adicionales --}}
+                            <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 border-t border-gray-200 pt-4">
+                                <div>
+                                    <label class="mb-1 block text-sm font-medium text-gray-700">Descuento (%)</label>
+                                    <input type="number"
+                                           name="descuento"
+                                           x-model="descuento"
+                                           min="0" max="100" step="0.5"
+                                           placeholder="0"
+                                           value="{{ old('descuento', 0) }}"
+                                           class="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-900 placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500" />
+                                </div>
+                                <div>
+                                    <label class="mb-1 block text-sm font-medium text-gray-700">Válida hasta</label>
+                                    <input type="date"
+                                           name="valida_hasta"
+                                           value="{{ old('valida_hasta') }}"
+                                           class="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500" />
+                                </div>
+                            </div>
+                            <div class="mt-4">
+                                <label class="mb-1 block text-sm font-medium text-gray-700">Notas</label>
+                                <textarea name="notas" rows="2"
+                                          placeholder="Observaciones generales..."
+                                          class="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-900 placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500">{{ old('notas') }}</textarea>
+                            </div>
                         </div>
-                        <div>
-                            <label class="mb-1 block text-sm font-medium text-gray-700">Válida hasta</label>
-                            <input type="date"
-                                   name="valida_hasta"
-                                   value="{{ old('valida_hasta') }}"
-                                   class="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500" />
-                        </div>
-                    </div>
-                    <div class="mt-4">
-                        <label class="mb-1 block text-sm font-medium text-gray-700">Notas</label>
-                        <textarea name="notas" rows="2"
-                                  placeholder="Observaciones generales..."
-                                  class="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-900 placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500">{{ old('notas') }}</textarea>
+
                     </div>
                 </div>
             </div>

@@ -14,6 +14,7 @@ class Cotizacion extends Model
         'folio',
         'medico_id',
         'hospital_id',
+        'created_by',
         'estado',
         'subtotal',
         'descuento',
@@ -55,6 +56,11 @@ class Cotizacion extends Model
     public function hospital(): BelongsTo
     {
         return $this->belongsTo(Hospital::class);
+    }
+
+    public function creadoPor(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'created_by');
     }
 
     public function estudios(): HasMany

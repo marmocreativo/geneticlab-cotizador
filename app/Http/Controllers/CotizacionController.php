@@ -121,6 +121,7 @@ class CotizacionController extends Controller
         $cotizacion = Cotizacion::create([
             'medico_id'   => $medico->id,
             'hospital_id' => $hospital?->id,
+            'created_by'  => auth()->id(),
             'descuento'   => $request->descuento ?? 0,
             'notas'       => $request->notas,
             'valida_hasta'=> $request->valida_hasta,
@@ -223,47 +224,75 @@ class CotizacionController extends Controller
     }
 
     public function enviar(Request $request, Cotizacion $cotizacion)
-    {
-        $request->validate([
-            'email' => 'required|email',
-        ]);
+{
+    $request->validate([
+        'email' => 'required|email',
+        'firma_usuario_id' => 'nullable|exists:users,id',
+    ]);
 
-        $cotizacion->load(['medico.hospital', 'hospital', 'estudios.estudio']);
+    $cotizacion->load(['medico.hospital', 'hospital', 'estudios.estudio']);
 
-        $incluirDatosBancarios = $request->boolean('datos_bancarios');
-        $usuario = auth()->user();
+    $incluirDatosBancarios = $request->boolean('datos_bancarios');
+    $usuario = $this->resolverUsuarioFirma($request, $cotizacion);
 
-        \Illuminate\Support\Facades\Mail::to($request->email)
-            ->cc('agendatucita@geneticlab.mx')
-            ->send(new \App\Mail\CotizacionMail($cotizacion, $incluirDatosBancarios, $usuario));
+    \Illuminate\Support\Facades\Mail::to($request->email)
+        ->cc('agendatucita@geneticlab.mx')
+        ->send(new \App\Mail\CotizacionMail($cotizacion, $incluirDatosBancarios, $usuario));
 
-        $cotizacion->update(['estado' => 'enviada']);
+    $cotizacion->update(['estado' => 'enviada']);
 
-        return back()->with('success', 'Cotización enviada a ' . $request->email);
+    return back()->with('success', 'Cotización enviada a ' . $request->email);
+}
+
+public function descargarPdf(Request $request, Cotizacion $cotizacion)
+{
+    $request->validate([
+        'firma_usuario_id' => 'nullable|exists:users,id',
+    ]);
+
+    $cotizacion->load(['medico.hospital', 'hospital', 'estudios.estudio']);
+
+    $incluirDatosBancarios = $request->boolean('datos_bancarios');
+    $usuario = $this->resolverUsuarioFirma($request, $cotizacion);
+
+    $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('pdf.cotizacion', compact('cotizacion', 'incluirDatosBancarios', 'usuario'));
+
+    return $pdf->download($cotizacion->folio . '.pdf');
+}
+
+public function verPdf(Request $request, Cotizacion $cotizacion)
+{
+    $request->validate([
+        'firma_usuario_id' => 'nullable|exists:users,id',
+    ]);
+
+    $cotizacion->load(['medico.hospital', 'hospital', 'estudios.estudio']);
+
+    $incluirDatosBancarios = $request->boolean('datos_bancarios');
+    $usuario = $this->resolverUsuarioFirma($request, $cotizacion);
+
+    $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('pdf.cotizacion', compact('cotizacion', 'incluirDatosBancarios', 'usuario'));
+
+    return $pdf->stream($cotizacion->folio . '.pdf');
+}
+
+/**
+ * Resuelve qué usuario firma el PDF/correo:
+ * 1) el que se seleccionó explícitamente en el formulario,
+ * 2) si no, el que creó la cotización,
+ * 3) si no, el usuario autenticado (fallback para cotizaciones viejas sin created_by).
+ */
+private function resolverUsuarioFirma(Request $request, Cotizacion $cotizacion): ?\App\Models\User
+{
+    if ($request->filled('firma_usuario_id')) {
+        return \App\Models\User::find($request->firma_usuario_id);
     }
 
-    public function descargarPdf(Request $request, Cotizacion $cotizacion)
-    {
-        $cotizacion->load(['medico.hospital', 'hospital', 'estudios.estudio']);
-
-        $incluirDatosBancarios = $request->boolean('datos_bancarios');
-        $usuario = auth()->user();
-
-        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('pdf.cotizacion', compact('cotizacion', 'incluirDatosBancarios', 'usuario'));
-
-        return $pdf->download($cotizacion->folio . '.pdf');
+    if ($cotizacion->created_by) {
+        return \App\Models\User::find($cotizacion->created_by);
     }
 
-    public function verPdf(Request $request, Cotizacion $cotizacion)
-    {
-        $cotizacion->load(['medico.hospital', 'hospital', 'estudios.estudio']);
-
-        $incluirDatosBancarios = $request->boolean('datos_bancarios');
-        $usuario = auth()->user();
-
-        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('pdf.cotizacion', compact('cotizacion', 'incluirDatosBancarios', 'usuario'));
-
-        return $pdf->stream($cotizacion->folio . '.pdf');
-    }
+    return auth()->user();
+}
 
 }

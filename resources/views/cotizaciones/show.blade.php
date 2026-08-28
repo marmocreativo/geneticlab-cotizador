@@ -27,10 +27,21 @@
         </div>
 
         {{-- Acciones de estado --}}
-        <div class="flex items-center gap-2 flex-wrap" x-data="{ datosBancarios: false }">
+        <div class="flex items-center gap-2 flex-wrap" x-data="{ datosBancarios: false, firmaUsuarioId: '{{ $cotizacion->created_by ?? auth()->id() }}' }">
             <label class="inline-flex items-center gap-2 rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-600 cursor-pointer select-none">
                 <input type="checkbox" x-model="datosBancarios" class="rounded border-gray-300 text-[#002745] focus:ring-[#002745]">
                 Agregar datos bancarios
+            </label>
+
+            <label class="inline-flex items-center gap-2 rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-600 select-none">
+                Firma:
+                <select x-model="firmaUsuarioId" class="rounded-md border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500">
+                    @foreach(\App\Models\User::orderBy('name')->get() as $usuarioFirma)
+                        <option value="{{ $usuarioFirma->id }}">
+                            {{ $usuarioFirma->nombre_completo }}
+                        </option>
+                    @endforeach
+                </select>
             </label>
 
             @if($cotizacion->estado === 'borrador')
@@ -76,7 +87,7 @@
             </a>
 
             {{-- Descargar PDF --}}
-            <a :href="datosBancarios ? '{{ route('cotizaciones.pdf', $cotizacion) }}?datos_bancarios=1' : '{{ route('cotizaciones.pdf', $cotizacion) }}'"
+            <a :href="`{{ route('cotizaciones.pdf', $cotizacion) }}?firma_usuario_id=${firmaUsuarioId}` + (datosBancarios ? '&datos_bancarios=1' : '')"
             target="_blank"
             class="inline-flex items-center gap-2 rounded-lg border border-gray-200 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors">
                 <svg xmlns="http://www.w3.org/2000/svg" class="size-4" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
@@ -150,7 +161,7 @@
                                placeholder="correo@ejemplo.com"
                                required
                                class="mb-2 w-full rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-900 placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500" />
-                        <input type="hidden" name="datos_bancarios" :value="datosBancarios ? 1 : 0">
+                        <input type="hidden" name="firma_usuario_id" :value="firmaUsuarioId">
                         <button type="submit"
                                 class="w-full rounded-lg px-4 py-2 text-sm font-medium text-white hover:opacity-90 transition-colors"
                                 style="background-color:#002745;">
